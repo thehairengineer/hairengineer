@@ -109,11 +109,11 @@ export default function ClientDetailsModal({ appointment, isOpen, onClose, forma
             <div className="grid grid-cols-1 gap-4 bg-gray-900/50 p-4 rounded-lg border border-gray-800">
               <div>
                 <span className="text-gray-400 text-xs block">Total Amount</span>
-                <span className="text-white font-medium">${formatAmount(appointment.totalAmount)}</span>
+                <span className="text-white font-medium">GHS {formatAmount(appointment.totalAmount)}</span>
               </div>
               <div>
                 <span className="text-gray-400 text-xs block">Amount Paid</span>
-                <span className="text-white">${formatAmount(appointment.amountPaid)}</span>
+                <span className="text-white">GHS {formatAmount(appointment.amountPaid)}</span>
               </div>
               <div>
                 <span className="text-gray-400 text-xs block">Balance</span>
@@ -124,7 +124,7 @@ export default function ClientDetailsModal({ appointment, isOpen, onClose, forma
                     ? 'text-yellow-400'
                     : 'text-red-400'
                 }`}>
-                  ${formatAmount((appointment.totalAmount || 0) - (appointment.amountPaid || 0))}
+                  GHS {formatAmount((appointment.totalAmount || 0) - (appointment.amountPaid || 0))}
                 </span>
               </div>
               <div>

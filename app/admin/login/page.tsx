@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function AdminLogin() {
   const [credentials, setCredentials] = useState({
@@ -13,14 +12,147 @@ export default function AdminLogin() {
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [showResetButton, setShowResetButton] = useState(false)
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const searchParams = useSearchParams()
 
-  // Redirect if already authenticated
-  if (status === 'authenticated') {
-    router.push('/admin')
-    return null
-  }
+  // Check if there's an error parameter
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam) {
+      if (errorParam === 'auth_failed') {
+        setError('Authentication failed. Please try again.')
+      } else {
+        setError('An error occurred. Please try again.')
+      }
+    }
+  }, [searchParams])
+
+  // Redirect if already authenticated through the API
+  useEffect(() => {
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Don't check auth if we're explicitly resetting or have just logged out
+    const isResettingAuth = 
+      urlParams.has('reset') || 
+      urlParams.has('logout') || 
+      urlParams.has('error');
+    
+    // Log what we're doing
+    console.log('Login page initial check:', { 
+      isResettingAuth, 
+      hasParams: urlParams.toString() !== '',
+      url: window.location.href
+    });
+    
+    // Skip auth check if explicitly resetting auth
+    if (isResettingAuth) {
+      console.log('Skipping auth check due to parameters:', urlParams.toString());
+      return;
+    }
+    
+    // Check authentication status through our API
+    const checkAuthStatus = async () => {
+      try {
+        console.log('Checking auth status...');
+        
+        // Add a timeout to the fetch to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+          console.log('Auth check timeout - aborting');
+          controller.abort();
+        }, 3000);
+        
+        const response = await fetch('/api/auth/status', {
+          headers: { 
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          },
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          console.log('Auth check returned non-OK response:', response.status);
+          return;
+        }
+        
+        const data = await response.json();
+        console.log('Auth status result:', data);
+        
+        if (response.ok && data.authenticated) {
+          // Check for a loop by counting navigations in a short time period
+          const lastNavTime = parseInt(localStorage.getItem('lastNavTime') || '0', 10);
+          const navCount = parseInt(localStorage.getItem('navCount') || '0', 10);
+          const now = Date.now();
+          
+          // If we've navigated too many times in a short period, reset auth to break the loop
+          if (now - lastNavTime < 2000 && navCount > 2) {
+            console.warn('Detected possible redirect loop, clearing session data');
+            localStorage.removeItem('navCount');
+            localStorage.removeItem('lastNavTime');
+            // Force signout to break loop and add reset parameter to prevent immediate recheck
+            window.location.href = '/admin/login?reset=true';
+            return;
+          }
+          
+          // Track navigation
+          localStorage.setItem('lastNavTime', now.toString());
+          localStorage.setItem('navCount', (navCount + 1).toString());
+          
+          // Continue with normal redirect with a slight delay to prevent flash
+          setTimeout(() => {
+            router.push('/admin/dashboard');
+          }, 100);
+        }
+      } catch (error) {
+        console.error('Auth status check failed:', error);
+      }
+    };
+    
+    checkAuthStatus();
+  }, [router]);
+
+  // Add forced reset on login page first load
+  useEffect(() => {
+    // Clear cookie on first load if there's a loop detected
+    if (document.referrer.includes('/admin/login')) {
+      document.cookie = 'auth-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+  }, []);
+
+  // Clear any redirect counters on component mount
+  useEffect(() => {
+    // Clear the redirect attempt cookie to fix potential redirect loops
+    document.cookie = 'redirect_attempt=0; Path=/; Max-Age=60';
+    
+    // Reset navigation tracking after 5 seconds of inactivity
+    const timer = setTimeout(() => {
+      localStorage.removeItem('navCount');
+      localStorage.removeItem('lastNavTime');
+    }, 5000);
+    
+    // Show reset button if page loads multiple times
+    const pageLoads = parseInt(localStorage.getItem('pageLoads') || '0', 10);
+    localStorage.setItem('pageLoads', (pageLoads + 1).toString());
+    
+    if (pageLoads > 2) {
+      setShowResetButton(true);
+    }
+    
+    // Reset page loads counter after 10 seconds
+    const resetTimer = setTimeout(() => {
+      localStorage.setItem('pageLoads', '0');
+    }, 10000);
+    
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(resetTimer);
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,23 +160,33 @@ export default function AdminLogin() {
     setLoading(true)
 
     try {
-      const result = await signIn('credentials', {
-        username: credentials.username,
-        password: credentials.password,
-        redirect: false,
-        callbackUrl: '/admin/dashboard'
-      })
-
-      if (result?.error) {
-        setError('Invalid username or password')
-        setLoading(false)
+      // Only use our direct API endpoint for login
+      const loginResponse = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: credentials.username,
+          password: credentials.password
+        }),
+        cache: 'no-store'
+      });
+      
+      const data = await loginResponse.json();
+      
+      if (loginResponse.ok && data.success) {
+        // Successful login via our API
+        router.push(data.redirectTo || '/admin/dashboard');
+        router.refresh();
       } else {
-        // If no error, redirect manually to ensure the page is refreshed
-        router.push('/admin/dashboard')
-        router.refresh()
+        // Login failed
+        setError(data.message || 'Invalid username or password');
       }
     } catch (error) {
+      console.error('Login error:', error);
       setError('An error occurred. Please try again.')
+    } finally {
       setLoading(false)
     }
   }
@@ -126,12 +268,20 @@ export default function AdminLogin() {
           </form>
 
           {/* Back to Home Link */}
-          <div className="text-center mt-6">
+          <div className="text-center mt-6 flex flex-col gap-2">
             <a 
               href="/" 
               className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
             >
               Back to Home
+            </a>
+            
+            {/* Always show reset link but with low visibility */}
+            <a 
+              href="/admin/reset-auth" 
+              className={`text-xs ${showResetButton ? 'text-red-400 hover:text-red-300' : 'text-gray-800 hover:text-gray-600'} transition-colors duration-200 mt-2`}
+            >
+              Reset Authentication
             </a>
           </div>
         </motion.div>

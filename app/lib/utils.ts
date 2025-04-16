@@ -18,6 +18,14 @@ export const formatAmount = (amount: number | undefined | null): string => {
 };
 
 /**
+ * Format currency amount with GHS symbol
+ */
+export const formatCurrency = (amount: number | undefined | null): string => {
+  if (amount === undefined || amount === null) return '-';
+  return `GHS ${amount.toFixed(2)}`;
+};
+
+/**
  * Format a date string into a readable format
  */
 export const formatDate = (dateString: string | undefined): string => {

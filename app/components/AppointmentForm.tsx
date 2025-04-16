@@ -160,7 +160,7 @@ function PaymentConfirmation({ formData, selectedService, onConfirm, onCancel }:
             <h4 className="text-gray-300 font-medium mb-2">Payment Details</h4>
             <div className="flex justify-between text-sm mb-2">
               <span className="text-gray-400">Service Fee:</span>
-              <span className="text-white">${selectedService.price?.toLocaleString()}</span>
+              <span className="text-white">GHS{selectedService.price?.toLocaleString()}</span>
             </div>
             <div className="flex justify-between font-medium">
               <span className="text-gray-300">Total Amount:</span>
@@ -1079,15 +1079,15 @@ export default function AppointmentForm() {
             {submitStatus === 'loading' 
               ? 'Processing...' 
               : isProcessingPayment 
-                ? 'Verifying Payment... (1:45 timeout)' 
+                ? 'Verifying Payment...' 
                 : systemSettings.paymentRequired
-                  ? `Pay $${servicePrice} to Book`
+                  ? `Pay GHS${servicePrice} to Book`
                   : 'Book Appointment'}
       </button>
           
           {systemSettings.paymentRequired && (
             <p className="text-sm text-center text-gray-400">
-              Your slot will be reserved after successful payment of $${servicePrice}
+              Your slot will be reserved after successful payment of GHS{servicePrice}
             </p>
           )}
           
