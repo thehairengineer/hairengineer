@@ -1,5 +1,4 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { withAuth } from 'next-auth/middleware';
 
 // Add security headers
 const securityHeaders = [
@@ -56,24 +55,17 @@ const addCacheHeaders = (req: NextRequest, res: NextResponse) => {
   return res;
 };
 
-// Export a simpler middleware
+// Export a simple middleware - no auth checking in middleware
 export default function middleware(req: NextRequest) {
-  // Skip processing for authentication-related paths
+  // Completely skip auth routes
   if (
-    req.nextUrl.pathname === '/admin/login' ||
-    req.nextUrl.pathname === '/login' ||
-    req.nextUrl.pathname.startsWith('/api/auth')
+    req.nextUrl.pathname.startsWith('/api/auth') || 
+    req.nextUrl.pathname.startsWith('/admin/login')
   ) {
-    return NextResponse.next();
+    return NextResponse.next(); 
   }
   
-  // For admin dashboard pages, require authentication
-  if (req.nextUrl.pathname.startsWith('/admin/dashboard')) {
-    // This will automatically redirect to login if not authenticated
-    return NextResponse.redirect(new URL('/admin/login', req.url));
-  }
-  
-  // For all other routes, apply standard middleware
+  // Standard security headers for other routes
   const res = NextResponse.next();
   
   // Add security headers
@@ -88,14 +80,6 @@ export default function middleware(req: NextRequest) {
 // Apply middleware to specific routes, completely excluding auth routes
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - api/auth/* routes (NextAuth authentication)
-     * - login pages
-     */
-    '/((?!_next/static|_next/image|favicon.ico|api/auth|api/health|login|admin/login).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/auth|api/health|admin/login).*)',
   ],
 }; 

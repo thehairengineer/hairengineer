@@ -13,26 +13,59 @@ export default function AdminLogin() {
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
   const router = useRouter()
   const { data: session, status } = useSession()
 
-  // Reset any stuck sessions on page load
+  // Clear cookies on page load to break redirect loops
   useEffect(() => {
-    const resetSession = async () => {
-      if (window.location.search.includes('reset=true')) {
-        await signOut({ redirect: false });
-        window.location.href = '/admin/login';
-      }
-    };
-    resetSession();
-  }, []);
-
-  // Use useEffect for redirection instead of immediate redirect
-  useEffect(() => {
-    if (status === 'authenticated' && session?.user?.role === 'admin') {
-      router.push('/admin/dashboard');
+    const clearCookies = () => {
+      // Clear all cookies
+      document.cookie.split(';').forEach(cookie => {
+        const [name] = cookie.trim().split('=')
+        if (name && name.includes('next-auth')) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`
+        }
+      })
     }
-  }, [status, router, session]);
+    
+    // Clear cookies if we detect we might be in a redirect loop
+    const currentTime = new Date().getTime()
+    const lastVisit = parseInt(localStorage.getItem('lastLoginVisit') || '0')
+    
+    if (currentTime - lastVisit < 2000) {
+      // We're visiting the login page too quickly - likely a redirect loop
+      clearCookies()
+      localStorage.removeItem('lastLoginVisit')
+    } else {
+      localStorage.setItem('lastLoginVisit', currentTime.toString())
+    }
+    
+    // Always clear session on load
+    signOut({ redirect: false })
+  }, [])
+
+  // Reset any stuck sessions on manual reset
+  const handleReset = async () => {
+    setIsResetting(true)
+    
+    // Clear all cookies
+    document.cookie.split(';').forEach(cookie => {
+      const [name] = cookie.trim().split('=')
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`
+    })
+    
+    // Clear localStorage 
+    localStorage.clear()
+    
+    // Sign out without redirect
+    await signOut({ redirect: false })
+    
+    // Force reload the page after a delay
+    setTimeout(() => {
+      window.location.href = '/admin/login'
+    }, 1000)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,8 +86,8 @@ export default function AdminLogin() {
         setError('Invalid username or password')
         setLoading(false)
       } else if (result?.ok) {
-        // Redirect after successful login
-        window.location.href = '/admin/dashboard';
+        // Redirect after successful login with window.location for a complete refresh
+        window.location.href = '/admin/dashboard'
       } else {
         setError('Authentication failed')
         setLoading(false)
@@ -93,70 +126,82 @@ export default function AdminLogin() {
             <p className="text-gray-400">Admin Dashboard</p>
           </div>
 
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="bg-black/50 backdrop-blur-sm p-8 rounded-lg border border-gray-800">
-            {error && (
-              <div className="mb-4 p-3 bg-red-900/50 border border-red-800 text-red-300 rounded text-sm">
-                {error}
+          {isResetting ? (
+            <div className="bg-black/50 backdrop-blur-sm p-8 rounded-lg border border-gray-800 text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 border-t-4 border-pink-500 border-solid rounded-full animate-spin mx-auto"></div>
               </div>
-            )}
-            <div className="space-y-6">
-              {/* Username Field */}
-              <div>
-                <label htmlFor="username" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  value={credentials.username}
-                  onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
-                  className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded focus:outline-none focus:border-gray-700 text-white"
-                  required
-                />
-              </div>
-
-              {/* Password Field */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={credentials.password}
-                  onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-                  className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded focus:outline-none focus:border-gray-700 text-white"
-                  required
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white font-['Noto_Serif_Display'] uppercase tracking-wider hover:from-gray-700 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 transition-all duration-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Signing in...' : 'Sign In'}
-              </button>
+              <h2 className="text-xl text-white mb-2">Resetting Session</h2>
+              <p className="text-gray-400 text-sm">Clearing cookies and session data...</p>
             </div>
-          </form>
+          ) : (
+            <>
+              {/* Login Form */}
+              <form onSubmit={handleSubmit} className="bg-black/50 backdrop-blur-sm p-8 rounded-lg border border-gray-800">
+                {error && (
+                  <div className="mb-4 p-3 bg-red-900/50 border border-red-800 text-red-300 rounded text-sm">
+                    {error}
+                  </div>
+                )}
+                <div className="space-y-6">
+                  {/* Username Field */}
+                  <div>
+                    <label htmlFor="username" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      id="username"
+                      value={credentials.username}
+                      onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
+                      className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded focus:outline-none focus:border-gray-700 text-white"
+                      required
+                    />
+                  </div>
 
-          {/* Back to Home Link */}
-          <div className="text-center mt-6">
-            <a 
-              href="/" 
-              className="text-sm text-gray-400 hover:text-white transition-colors duration-200 mr-4"
-            >
-              Back to Home
-            </a>
-            <a 
-              href="/admin/login?reset=true" 
-              className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
-            >
-              Reset Session
-            </a>
-          </div>
+                  {/* Password Field */}
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      value={credentials.password}
+                      onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                      className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded focus:outline-none focus:border-gray-700 text-white"
+                      required
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white font-['Noto_Serif_Display'] uppercase tracking-wider hover:from-gray-700 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 transition-all duration-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Signing in...' : 'Sign In'}
+                  </button>
+                </div>
+              </form>
+
+              {/* Reset Session Button */}
+              <div className="text-center mt-6">
+                <a 
+                  href="/" 
+                  className="text-sm text-gray-400 hover:text-white transition-colors duration-200 mr-4"
+                >
+                  Back to Home
+                </a>
+                <button
+                  onClick={handleReset}
+                  className="text-sm text-gray-400 hover:text-white transition-colors duration-200 underline"
+                >
+                  Reset Session
+                </button>
+              </div>
+            </>
+          )}
         </motion.div>
       </div>
     </div>

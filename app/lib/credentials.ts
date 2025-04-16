@@ -32,17 +32,15 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   
-  // Session configuration
+  // Session configuration - shorter session for testing
   session: {
     strategy: 'jwt',
-    maxAge: 24 * 60 * 60, // 1 day
+    maxAge: 2 * 60 * 60, // 2 hours
   },
   
-  // Pages
+  // Pages - simple configuration
   pages: {
     signIn: '/admin/login',
-    error: '/admin/login',
-    signOut: '/admin/login',
   },
   
   // Callbacks
@@ -64,7 +62,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   
-  // Security
+  // Security settings
   secret: process.env.NEXTAUTH_SECRET || 'your-super-secret-key-here',
-  debug: false,
+  debug: process.env.NODE_ENV === 'development',
 }; 
