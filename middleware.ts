@@ -143,27 +143,6 @@ export default async function middleware(req: NextRequest) {
   // Add cache headers for static assets
   return addCacheHeaders(req, res);
 }
-// Export a simple middleware - no auth checking in middleware
-export default function middleware(req: NextRequest) {
-  // Completely skip auth routes
-  if (
-    req.nextUrl.pathname.startsWith('/api/auth') || 
-    req.nextUrl.pathname.startsWith('/admin/login')
-  ) {
-    return NextResponse.next(); 
-  }
-  
-  // Standard security headers for other routes
-  const res = NextResponse.next();
-  
-  // Add security headers
-  securityHeaders.forEach(({ key, value }) => {
-    res.headers.set(key, value);
-  });
-  
-  // Add cache headers
-  return addCacheHeaders(req, res);
-}
 
 // Apply middleware to specific routes, completely excluding auth routes
 export const config = {
