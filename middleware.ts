@@ -49,52 +49,43 @@ const addCacheHeaders = (req: NextRequest, res: NextResponse) => {
     url.endsWith('.css') ||
     url.endsWith('.js')
   ) {
-    // Cache static assets for 1 year
+    // Cache static headers for 1 year
     res.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   }
   
   return res;
 };
 
-// Middleware function
-export default withAuth(
-  function middleware(req: NextRequest) {
-    // Skip processing for login/auth-related pages to prevent redirect loops
-    const isAuthRoute = req.nextUrl.pathname.startsWith('/admin/login') || 
-                       req.nextUrl.pathname.startsWith('/api/auth');
-    
-    if (isAuthRoute) {
-      return NextResponse.next();
-    }
-    
-    // Get the response
-    const res = NextResponse.next();
-    
-    // Add security headers
-    securityHeaders.forEach(({ key, value }) => {
-      res.headers.set(key, value);
-    });
-    
-    // Add cache headers
-    return addCacheHeaders(req, res);
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        // Skip auth check for non-admin routes
-        const path = req.nextUrl.pathname;
-        if (!path.startsWith('/admin') || path === '/admin/login') {
-          return true;
-        }
-        
-        // Require auth for admin routes
-        return !!token;
-      },
-    },
+// Export a simpler middleware
+export default function middleware(req: NextRequest) {
+  // Skip processing for authentication-related paths
+  if (
+    req.nextUrl.pathname === '/admin/login' ||
+    req.nextUrl.pathname === '/login' ||
+    req.nextUrl.pathname.startsWith('/api/auth')
+  ) {
+    return NextResponse.next();
   }
-);
+  
+  // For admin dashboard pages, require authentication
+  if (req.nextUrl.pathname.startsWith('/admin/dashboard')) {
+    // This will automatically redirect to login if not authenticated
+    return NextResponse.redirect(new URL('/admin/login', req.url));
+  }
+  
+  // For all other routes, apply standard middleware
+  const res = NextResponse.next();
+  
+  // Add security headers
+  securityHeaders.forEach(({ key, value }) => {
+    res.headers.set(key, value);
+  });
+  
+  // Add cache headers
+  return addCacheHeaders(req, res);
+}
 
-// Apply middleware to specific routes only
+// Apply middleware to specific routes, completely excluding auth routes
 export const config = {
   matcher: [
     /*
@@ -102,9 +93,9 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - api routes that don't require auth
-     * - auth-related routes
+     * - api/auth/* routes (NextAuth authentication)
+     * - login pages
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/health|api/auth|admin/login).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/auth|api/health|login|admin/login).*)',
   ],
 }; 

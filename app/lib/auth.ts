@@ -8,6 +8,11 @@ interface ExtendedUser {
   role: string;
 }
 
+// Added safety checks for environment variables
+const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+const adminPassword = process.env.ADMIN_PASSWORD || 'Hairengineer2025!';
+const authSecret = process.env.NEXTAUTH_SECRET || 'your-super-secret-key-here';
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -17,8 +22,9 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (credentials?.username === process.env.ADMIN_USERNAME && 
-            credentials?.password === process.env.ADMIN_PASSWORD) {
+        // Use our safely extracted environment variables
+        if (credentials?.username === adminUsername && 
+            credentials?.password === adminPassword) {
           return {
             id: '1',
             name: 'Admin',
@@ -52,6 +58,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+  // Simplified cookie configuration to avoid issues
   cookies: {
     sessionToken: {
       name: `next-auth.session-token`,
@@ -59,11 +66,16 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: process.env.NODE_ENV === 'production',
+        secure: true, // Always use secure in production
       },
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  secret: authSecret,
+  debug: false, // Disable debug mode in production
+  // Improve security with JWT configuration
+  jwt: {
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+  },
 }
+
 

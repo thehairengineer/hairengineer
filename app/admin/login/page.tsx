@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { signIn, useSession } from 'next-auth/react'
+import { signIn, useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export default function AdminLogin() {
@@ -16,12 +16,23 @@ export default function AdminLogin() {
   const router = useRouter()
   const { data: session, status } = useSession()
 
+  // Reset any stuck sessions on page load
+  useEffect(() => {
+    const resetSession = async () => {
+      if (window.location.search.includes('reset=true')) {
+        await signOut({ redirect: false });
+        window.location.href = '/admin/login';
+      }
+    };
+    resetSession();
+  }, []);
+
   // Use useEffect for redirection instead of immediate redirect
   useEffect(() => {
-    if (status === 'authenticated') {
-      router.push('/admin/dashboard')
+    if (status === 'authenticated' && session?.user?.role === 'admin') {
+      router.push('/admin/dashboard');
     }
-  }, [status, router])
+  }, [status, router, session]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,21 +40,27 @@ export default function AdminLogin() {
     setLoading(true)
 
     try {
+      // Clear any existing sessions first
+      await signOut({ redirect: false });
+      
       const result = await signIn('credentials', {
         username: credentials.username,
         password: credentials.password,
         redirect: false,
-        callbackUrl: '/admin/dashboard'
       })
 
       if (result?.error) {
         setError('Invalid username or password')
         setLoading(false)
+      } else if (result?.ok) {
+        // Redirect after successful login
+        window.location.href = '/admin/dashboard';
       } else {
-        // If no error, redirect manually to ensure the page is refreshed
-        router.push('/admin/dashboard')
+        setError('Authentication failed')
+        setLoading(false)
       }
     } catch (error) {
+      console.error('Login error:', error);
       setError('An error occurred. Please try again.')
       setLoading(false)
     }
@@ -129,9 +146,15 @@ export default function AdminLogin() {
           <div className="text-center mt-6">
             <a 
               href="/" 
-              className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
+              className="text-sm text-gray-400 hover:text-white transition-colors duration-200 mr-4"
             >
               Back to Home
+            </a>
+            <a 
+              href="/admin/login?reset=true" 
+              className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
+            >
+              Reset Session
             </a>
           </div>
         </motion.div>
