@@ -59,6 +59,14 @@ const addCacheHeaders = (req: NextRequest, res: NextResponse) => {
 // Middleware function
 export default withAuth(
   function middleware(req: NextRequest) {
+    // Skip processing for login/auth-related pages to prevent redirect loops
+    const isAuthRoute = req.nextUrl.pathname.startsWith('/admin/login') || 
+                       req.nextUrl.pathname.startsWith('/api/auth');
+    
+    if (isAuthRoute) {
+      return NextResponse.next();
+    }
+    
     // Get the response
     const res = NextResponse.next();
     
@@ -72,16 +80,21 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => {
-        // Allow all requests regardless of auth status
-        // The withAuth will still protect the routes in [...nextauth].ts
-        return true;
+      authorized: ({ token, req }) => {
+        // Skip auth check for non-admin routes
+        const path = req.nextUrl.pathname;
+        if (!path.startsWith('/admin') || path === '/admin/login') {
+          return true;
+        }
+        
+        // Require auth for admin routes
+        return !!token;
       },
     },
   }
 );
 
-// Apply middleware to all routes
+// Apply middleware to specific routes only
 export const config = {
   matcher: [
     /*
@@ -90,7 +103,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - api routes that don't require auth
+     * - auth-related routes
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/health).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/health|api/auth|admin/login).*)',
   ],
 }; 

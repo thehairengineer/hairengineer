@@ -32,6 +32,7 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: '/admin/login',
+    error: '/admin/login',
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -62,5 +63,7 @@ export const authOptions: NextAuthOptions = {
       },
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
 }
 
