@@ -6,8 +6,13 @@ import Link from 'next/link'
 interface PaymentResult {
   success?: boolean;
   message?: string;
-  data?: any;
-  verification?: any;
+  data?: Record<string, unknown>;
+  verification?: {
+    status?: string;
+    reference?: string;
+    amount?: number;
+    [key: string]: unknown;
+  };
 }
 
 export default function VerifyPaymentTest() {

@@ -2,7 +2,6 @@
 
 import './globals.css'
 import { Montserrat } from 'next/font/google'
-import { SessionProvider } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Toaster } from 'react-hot-toast'
@@ -25,7 +24,8 @@ export default function RootLayout({
   const handleTouchStart = () => {
     const timer = setTimeout(() => {
       setIsLongPressed(true)
-      router.push('/admin')
+      // Go through reset-auth to clear any cookies first
+      router.push('/admin/reset-auth')
     }, 3000) // 3 second long press for admin
     setPressTimer(timer)
   }
@@ -75,7 +75,7 @@ export default function RootLayout({
           }}
         />
         <div className="max-w-[390px] w-full h-screen overflow-hidden relative flex flex-col items-center justify-center">
-          <SessionProvider>{children}</SessionProvider>
+          {children}
         </div>
       </body>
     </html>

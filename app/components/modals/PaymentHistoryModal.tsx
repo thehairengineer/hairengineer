@@ -67,7 +67,7 @@ export default function PaymentHistoryModal({ appointment, isOpen, onClose }: Pa
             ))}
             <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
               <span className="text-gray-300">Total Paid:</span>
-              <span className="text-white font-medium">${formatAmount(appointment.amountPaid)}</span>
+              <span className="text-white font-medium">GHS {formatAmount(appointment.amountPaid)}</span>
             </div>
           </div>
         ) : (

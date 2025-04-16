@@ -185,15 +185,15 @@ export default function PaymentModal({ appointment, isOpen, onClose, onSubmit, f
                 </div>
                 <div>
                   <span className="text-gray-400">Total Amount:</span>
-                  <p className="font-medium text-white">${formatAmount(appointment.totalAmount)}</p>
+                  <p className="font-medium text-white">GHS {formatAmount(appointment.totalAmount)}</p>
                 </div>
                 <div>
                   <span className="text-gray-400">Amount Paid:</span>
-                  <p className="font-medium text-white">${formatAmount(appointment.amountPaid)}</p>
+                  <p className="font-medium text-white">GHS {formatAmount(appointment.amountPaid)}</p>
                 </div>
                 <div className="col-span-2">
                   <span className="text-gray-400">Remaining Balance:</span>
-                  <p className="font-medium text-lg text-pink-300">${formatAmount(remainingBalance)}</p>
+                  <p className="font-medium text-lg text-pink-300">GHS {formatAmount(remainingBalance)}</p>
                 </div>
               </div>
             </div>
@@ -207,10 +207,10 @@ export default function PaymentModal({ appointment, isOpen, onClose, onSubmit, f
                     value={totalAmount}
                     onChange={handleTotalAmountChange}
                     className="w-full pl-3 pr-3 py-2 bg-gray-800 border border-gray-700 rounded focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition text-white"
-                    placeholder="Enter new total amount in $"
+                    placeholder="Enter new total amount in GHS"
                   />
                 </div>
-                <p className="text-xs text-gray-400 mt-1">Current total: ${formatAmount(appointment.totalAmount)}</p>
+                <p className="text-xs text-gray-400 mt-1">Current total: GHS {formatAmount(appointment.totalAmount)}</p>
               </div>
 
               <div>
@@ -221,7 +221,7 @@ export default function PaymentModal({ appointment, isOpen, onClose, onSubmit, f
                     value={amount}
                     onChange={handleAmountChange}
                     className="w-full pl-3 pr-3 py-2 bg-gray-800 border border-gray-700 rounded focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition text-white"
-                    placeholder="Enter payment amount in $"
+                    placeholder="Enter payment amount in GHS"
                     required
                   />
                 </div>
