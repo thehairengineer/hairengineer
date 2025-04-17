@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '475px',
+      },
       fontFamily: {
         josefin: ['var(--font-josefin)'],
         bonheur: ['var(--font-bonheur)'],
@@ -24,6 +27,9 @@ module.exports = {
           700: '#be185d',
           800: '#9d174d',
           900: '#831843',
+          neon: '#ff36b8',
+          bright: '#ff1493',
+          glow: '#ff71ce',
         },
         dark: {
           100: '#1a1a1a',
@@ -36,6 +42,10 @@ module.exports = {
       },
       animation: {
         'fade-in': 'fadeIn 1s ease-in-out',
+      },
+      boxShadow: {
+        'neon-pink': '0 0 10px rgba(255, 54, 184, 0.7), 0 0 20px rgba(255, 54, 184, 0.5)',
+        'neon-pink-lg': '0 0 15px rgba(255, 54, 184, 0.7), 0 0 30px rgba(255, 54, 184, 0.5)',
       },
     },
   },

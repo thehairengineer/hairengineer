@@ -1,5 +1,7 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import jwt from 'jsonwebtoken';
+import { JWT } from 'next-auth/jwt';
 
 interface ExtendedUser {
   id: string;
@@ -72,8 +74,14 @@ export const authOptions: NextAuthOptions = {
   },
   secret: authSecret,
   debug: false, // Disable debug mode in production
-  // Improve security with JWT configuration
+  // Fix for Invalid Compact JWE error by using custom encode/decode
   jwt: {
+    encode: async ({ secret, token }) => {
+      return jwt.sign(token as any, secret);
+    },
+    decode: async ({ secret, token }) => {
+      return jwt.verify(token as string, secret) as JWT;
+    },
     maxAge: 60 * 60 * 24 * 30, // 30 days
   },
 }

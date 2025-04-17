@@ -50,13 +50,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable}`}>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Herr+Von+Muellerhoff&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
       </head>
       <body 
-        className="font-montserrat bg-black text-white flex items-center justify-center min-h-screen overflow-hidden"
+        className="font-montserrat bg-black text-white flex items-center justify-center min-h-screen overflow-x-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleTouchStart}
@@ -74,7 +74,7 @@ export default function RootLayout({
             },
           }}
         />
-        <div className="max-w-[390px] w-full h-screen overflow-hidden relative flex flex-col items-center justify-center">
+        <div className="w-full max-w-screen-lg mx-auto h-screen overflow-y-auto relative flex flex-col items-center justify-center">
           {children}
         </div>
       </body>

@@ -394,7 +394,7 @@ export default function AppointmentForm() {
   }
 
   // Function to initialize Paystack payment
-  const initializePayment = useCallback(() => {
+  const initializePayment = useCallback((paymentWindow: Window | null) => {
     if (!formData.name || !formData.phone || !formData.whatsapp || 
         !formData.service || !formData.date || !formData.preferredLength) {
       setError('Please fill in all required fields')
@@ -403,6 +403,11 @@ export default function AppointmentForm() {
     
     if (!validatePhoneNumber(formData.phone)) {
       setPhoneError('Please enter a valid phone number')
+      return
+    }
+    
+    if (!paymentWindow) {
+      setError('Payment window could not be opened. Please ensure popups are allowed.')
       return
     }
     
@@ -461,15 +466,16 @@ export default function AppointmentForm() {
       // Store the reference for later
       setFormData(prev => ({...prev, paystackReference: data.data.reference}));
       
-      // Open Paystack checkout in new tab
-      const paymentWindow = window.open(data.data.authorization_url, '_blank');
+      // Redirect the already opened window to Paystack URL
+      if (paymentWindow) {
+        paymentWindow.location.href = data.data.authorization_url;
+      }
       
       // Calculate timeout based on system settings
       const timeoutMs = systemSettings.paymentTimeoutMinutes * 60 * 1000;
       
       // Show processing status
       setError(null);
-      setIsProcessingPayment(true);
       
       // Check payment status after a short delay to give user time to complete payment
       const checkInterval = setInterval(() => {
@@ -538,23 +544,31 @@ export default function AppointmentForm() {
         })
         .catch(error => {
           console.error('Error checking payment status:', error);
-          setError(`Payment verification error: ${error.message}. Please contact support with reference: ${data.data.reference}`);
+          setError(error instanceof Error ? error.message : 'Error checking payment status');
         });
       }, 5000); // Check every 5 seconds
       
-      // Set timeout to stop checking after the configured timeout period
+      // Set a timeout to stop checking after the configured time
       setTimeout(() => {
         clearInterval(checkInterval);
-        setIsProcessingPayment(false);
-        setError(`Payment verification unsuccessful after ${systemSettings.paymentTimeoutMinutes} minutes. Your payment may still be processing. Please contact support with reference: ${data.data.reference}`);
+        
+        if (isProcessingPayment) {
+          setIsProcessingPayment(false);
+          setError(`Payment verification timed out. If you have completed the payment, your booking will be confirmed shortly. Reference: ${data.data.reference}`);
+        }
       }, timeoutMs);
     })
     .catch(error => {
       console.error('Payment initialization error:', error);
-      setError(`Payment gateway error: ${error.message}`);
       setIsProcessingPayment(false);
+      setError(error instanceof Error ? error.message : 'Failed to initialize payment. Please try again.');
+      
+      // Close the popup window if there was an error
+      if (paymentWindow) {
+        paymentWindow.close();
+      }
     });
-  }, [formData, servicePrice, hairStylesByCategory, systemSettings.paymentTimeoutMinutes, validatePhoneNumber]);
+  }, [formData, hairStylesByCategory, servicePrice, systemSettings.paymentTimeoutMinutes, validatePhoneNumber, isProcessingPayment]);
   
   // Function to submit the form after successful payment
   const submitFormWithPayment = async (reference: string, paymentNote: string = '') => {
@@ -648,8 +662,19 @@ export default function AppointmentForm() {
     
     // Check if payment is required
     if (systemSettings.paymentRequired) {
-      // Start the payment process
-      initializePayment()
+      // Open a blank popup window immediately from the user click event
+      // This must be done synchronously before any async code
+      const paymentWindow = window.open('', '_blank')
+      if (!paymentWindow) {
+        setError('Popup blocked! Please allow popups for this website and try again.')
+        return
+      }
+      
+      // Set loading indicator in the popup
+      paymentWindow.document.write('<html><head><title>Processing Payment...</title></head><body style="background-color: #000; color: #fff; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh;"><div style="text-align: center;"><h3>Processing your payment...</h3><p>Please wait while we redirect you to the payment page.</p></div></body></html>')
+      
+      // Start the payment process, passing the already opened window
+      initializePayment(paymentWindow)
     } else {
       // If payment is not required, submit the form directly with confirmed status
       submitFormWithoutPayment()
@@ -890,27 +915,27 @@ export default function AppointmentForm() {
         </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-5 bg-gradient-to-b from-black to-gray-900 p-6 rounded-md border border-gray-800 shadow-lg">
+        <form onSubmit={handleSubmit} className="space-y-5 bg-black/80 backdrop-blur-sm p-6 rounded-lg border border-pink-500/20 shadow-lg">
           {/* Name field */}
-      <div>
-            <label htmlFor="name" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+          <div>
+            <label htmlFor="name" className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
               Your Full Name
             </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          value={formData.name}
-          onChange={handleInputChange}
-              className="lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat']"
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              value={formData.name}
+              onChange={handleInputChange}
+              className="w-full py-2.5 px-4 bg-black border border-gray-800 rounded-md text-white placeholder:text-gray-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors"
               placeholder="Enter your full name"
-        />
-      </div>
+            />
+          </div>
           
           {/* Phone field with validation */}
           <div>
-            <label htmlFor="phone" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+            <label htmlFor="phone" className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
               Phone Number
             </label>
             <input
@@ -920,7 +945,7 @@ export default function AppointmentForm() {
               required
               value={formData.phone}
               onChange={handleInputChange}
-              className={`lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat'] ${phoneError ? 'border-red-500' : ''}`}
+              className={`w-full py-2.5 px-4 bg-black border ${phoneError ? 'border-red-500' : 'border-gray-800'} rounded-md text-white placeholder:text-gray-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors`}
               placeholder="Enter your phone number"
             />
             {phoneError && <p className="text-red-500 text-xs mt-1">{phoneError}</p>}
@@ -928,86 +953,86 @@ export default function AppointmentForm() {
           
           {/* Social Media fields */}
           <div className="grid grid-cols-2 gap-4">
-      <div>
-              <label htmlFor="snapchat" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+            <div>
+              <label htmlFor="snapchat" className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
                 Snapchat (Optional)
-        </label>
-        <input
-          type="text"
-          id="snapchat"
-          name="snapchat"
-          value={formData.snapchat}
-          onChange={handleInputChange}
-                className="lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat']"
-          placeholder="Your Snapchat username"
-        />
-      </div>
-      <div>
-              <label htmlFor="whatsapp" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+              </label>
+              <input
+                type="text"
+                id="snapchat"
+                name="snapchat"
+                value={formData.snapchat}
+                onChange={handleInputChange}
+                className="w-full py-2.5 px-4 bg-black border border-gray-800 rounded-md text-white placeholder:text-gray-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors"
+                placeholder="Your Snapchat username"
+              />
+            </div>
+            <div>
+              <label htmlFor="whatsapp" className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
                 WhatsApp Number
-        </label>
-        <input
-          type="text"
-          id="whatsapp"
-          name="whatsapp"
-          required
-          value={formData.whatsapp}
-          onChange={handleInputChange}
-                className="lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat']"
-          placeholder="Your WhatsApp number"
-        />
-      </div>
-      </div>
+              </label>
+              <input
+                type="text"
+                id="whatsapp"
+                name="whatsapp"
+                required
+                value={formData.whatsapp}
+                onChange={handleInputChange}
+                className="w-full py-2.5 px-4 bg-black border border-gray-800 rounded-md text-white placeholder:text-gray-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors"
+                placeholder="Your WhatsApp number"
+              />
+            </div>
+          </div>
           
           {/* Service Category Selection */}
-      <div>
-            <label htmlFor="serviceCategory" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+          <div>
+            <label htmlFor="serviceCategory" className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
               Service Category
             </label>
-        <select
-          id="serviceCategory"
-          name="serviceCategory"
-          required
-          value={formData.serviceCategory}
-          onChange={handleInputChange}
-              className="lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat'] text-white"
+            <select
+              id="serviceCategory"
+              name="serviceCategory"
+              required
+              value={formData.serviceCategory}
+              onChange={handleInputChange}
+              className="w-full py-2.5 px-4 bg-black border border-gray-800 rounded-md text-white appearance-none focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors"
             >
               <option value="" disabled>Select a service category</option>
               {serviceCategories.map(category => (
-                <option key={category.value} value={category.value} className="bg-gray-900 text-white">
+                <option key={category.value} value={category.value} className="bg-black text-white">
                   {category.label}
                 </option>
-          ))}
-        </select>
+              ))}
+            </select>
             <p className="text-xs text-gray-500 mt-1">
               {serviceCategories.length === 0 ? 'Loading service categories...' : `${serviceCategories.length} categories available`}
             </p>
-      </div>
+          </div>
 
           {/* Service Selection (dependent on category) */}
-        <div>
-            <label htmlFor="service" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+          <div>
+            <label htmlFor="service" className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
               Service Type
             </label>
-          <select
-            id="service"
-            name="service"
-            required
-            value={formData.service}
-            onChange={handleInputChange}
+            <select
+              id="service"
+              name="service"
+              required
+              value={formData.service}
+              onChange={handleInputChange}
               disabled={!formData.serviceCategory}
-              className="lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat'] text-white"
+              className="w-full py-2.5 px-4 bg-black border border-gray-800 rounded-md text-white appearance-none focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="" disabled>
                 {formData.serviceCategory ? 'Select a service type' : 'Select a category first'}
               </option>
               {formData.serviceCategory && hairStylesByCategory[formData.serviceCategory] && 
                 hairStylesByCategory[formData.serviceCategory].map(option => (
-                  <option key={option.value} value={option.value} className="bg-gray-900 text-white">
-                {option.label}
-              </option>
-            ))}
-          </select>
+                  <option key={option.value} value={option.value} className="bg-black text-white">
+                    {option.label}
+                  </option>
+                ))}
+            </select>
             <p className="text-xs text-gray-500 mt-1">
               {!formData.serviceCategory ? 'Please select a category first' : 
                 !hairStylesByCategory[formData.serviceCategory] ? 'No services found for this category' : 
@@ -1017,7 +1042,7 @@ export default function AppointmentForm() {
           
           {/* Hair Length Selection */}
           <div>
-            <label htmlFor="preferredLength" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+            <label htmlFor="preferredLength" className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
               Preferred Length
             </label>
             <select
@@ -1025,65 +1050,79 @@ export default function AppointmentForm() {
               name="preferredLength"
               value={formData.preferredLength}
               onChange={handleInputChange}
-              className="lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat'] text-white"
+              className="w-full py-2.5 px-4 bg-black border border-gray-800 rounded-md text-white appearance-none focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors"
             >
-              <option value="" disabled className="bg-gray-900 text-white">Select preferred length</option>
-              <option value="shoulder" className="bg-gray-900 text-white">Shoulder</option>
-              <option value="bra" className="bg-gray-900 text-white">Bra</option>
-              <option value="waist" className="bg-gray-900 text-white">Waist</option>
-              <option value="butt" className="bg-gray-900 text-white">Butt</option>
-          </select>
-        </div>
+              <option value="" disabled className="bg-black text-white">Select preferred length</option>
+              <option value="shoulder" className="bg-black text-white">Shoulder</option>
+              <option value="bra" className="bg-black text-white">Bra</option>
+              <option value="waist" className="bg-black text-white">Waist</option>
+              <option value="butt" className="bg-black text-white">Butt</option>
+            </select>
+          </div>
 
           {/* Hair Color Text Input instead of dropdown */}
-      <div>
-            <label htmlFor="hairColor" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+          <div>
+            <label htmlFor="hairColor" className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
               Hair Color
             </label>
-        <input
-          type="text"
-          id="hairColor"
-          name="hairColor"
-          value={formData.hairColor}
-          onChange={handleInputChange}
-              className="lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat']"
+            <input
+              type="text"
+              id="hairColor"
+              name="hairColor"
+              value={formData.hairColor}
+              onChange={handleInputChange}
+              className="w-full py-2.5 px-4 bg-black border border-gray-800 rounded-md text-white placeholder:text-gray-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors"
               placeholder="Enter your preferred hair color"
-        />
-      </div>
+            />
+          </div>
 
           {/* Date Picker - reverted to original styling */}
           <div className="relative">
-            <label className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
+            <label className="block text-sm font-['Noto_Serif_Display'] text-pink-300 mb-1">
               Appointment Date
             </label>
-        <DatePicker
-          selected={formData.date}
+            <DatePicker
+              selected={formData.date}
               onChange={(date: Date | null) => handleInputChange(date)}
               minDate={new Date()}
               filterDate={filterAvailableDates}
               placeholderText="Select an available date"
-              className="lash-input bg-gray-900 focus:ring-1 focus:ring-gray-400 font-['Montserrat']"
+              className="w-full py-2.5 px-4 bg-black border border-gray-800 rounded-md text-white appearance-none focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/50 transition-colors"
               dayClassName={(date: Date) => {
-                return isDateAvailable(date) ? "text-amber-200 font-bold" : null;
+                return isDateAvailable(date) ? "text-pink-200 font-bold" : null;
               }}
               renderDayContents={renderDayContents}
-        />
-      </div>
+            />
+          </div>
           
           {/* Submit button - show different text based on payment requirement */}
-      <button
-        type="submit"
-            disabled={submitStatus === 'loading' || isProcessingPayment}
-            className="w-full py-3 mt-3 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-['Noto_Serif_Display'] uppercase tracking-wider hover:from-gray-600 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 transition-all duration-300 rounded"
+          <button
+            type="submit"
+            disabled={isProcessingPayment || submitStatus === 'loading'}
+            className="w-full py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-md font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            {submitStatus === 'loading' 
-              ? 'Processing...' 
-              : isProcessingPayment 
-                ? 'Verifying Payment...' 
-                : systemSettings.paymentRequired
-                  ? `Pay GHS${servicePrice} to Book`
-                  : 'Book Appointment'}
-      </button>
+            {isProcessingPayment ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing Payment...
+              </>
+            ) : submitStatus === 'loading' ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting...
+              </>
+            ) : systemSettings.paymentRequired ? (
+              'Book & Pay Now'
+            ) : (
+              'Book Appointment'
+            )}
+          </button>
           
           {systemSettings.paymentRequired && (
             <p className="text-sm text-center text-gray-400">

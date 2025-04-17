@@ -28,7 +28,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/admin", "destination": "/admin/dashboard" }
+    { "source": "/admin", "destination": "/admin" }
   ],
   "redirects": [
     { 
@@ -39,7 +39,7 @@
           "key": "next-auth.session-token"
         }
       ],
-      "destination": "/admin/dashboard", 
+      "destination": "/admin", 
       "permanent": false
     }
   ]

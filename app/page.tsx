@@ -62,9 +62,9 @@ export default function Home() {
         }}
       />
       
-      {/* Mobile view container */}
+      {/* Responsive container */}
       <motion.div 
-        className="mobile-view-container"
+        className="w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -89,11 +89,11 @@ export default function Home() {
         </motion.div>
         
         {/* Header section with background image and left-aligned text */}
-        <div className="relative h-[180px] header-section overflow-hidden">
+        <div className="relative h-[250px] sm:h-[220px] md:h-[250px] header-section overflow-hidden rounded-b-lg">
           {/* Background image with overlay */}
-          <div className="absolute inset-0 z-0 photo-shimmer">
+          <div className="absolute inset-0 z-0 ">
             <Image 
-              src="/images/lash-background.jpg" 
+              src="/images/backgroundphoto.png" 
               alt="Hair Engineer Background" 
               fill
               className="object-cover object-top"
@@ -103,32 +103,33 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/60 to-black/70"></div>
           </div>
           
-          {/* Left-aligned header text */}
-          <div className="absolute top-10 left-6 z-10 text-left">
+          {/* Left-aligned logo instead of text */}
+          <div className="absolute top-10 left-6 md:left-8 lg:left-10 z-10 text-left">
             <motion.h5 
-              className="text-[10px] tracking-[0.3em] text-gray-300 mb-1"
+              className="text-[15px] sm:text-xs md:text-sm tracking-[0.3em] text-gray-300 mb-1"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              WELCOME TO
+              <p className='text-[15px] sm:text-xs md:text-sm tracking-[0.3em] text-pink-300 mb-1'>Hello</p>Gorgeous <span className='text-pink-300'>Girlies!</span><p className='text-[15px] sm:text-xs md:text-sm tracking-[0.3em] text-pink-300 mb-1'>Welcome to</p>
             </motion.h5>
-            <motion.h1 
-              className="font-['Noto_Serif_Display'] text-4xl font-bold tracking-widest mb-0 leading-none text-gradient"
+            <motion.div 
+              className="relative w-[200px] sm:w-[50%] md:w-[300px] h-[80px] sm:h-[50%] md:h-[120px] overflow-visible"
               initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: 0 , scale: 1.2}}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              THE ΗΔΙR
-            </motion.h1>
-            <motion.h1 
-              className="font-['Noto_Serif_Display'] text-4xl font-bold tracking-widest leading-none text-gradient"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-            >
-              ΞNGIΝΞΞR
-            </motion.h1>
+              <div className="absolute top-0 left-0 w-[400%] h-[600%] transform origin-top-left scale-[0.25]">
+                <Image 
+                  src="/images/logo.png" 
+                  alt="Hair Engineer Logo" 
+                  fill
+                  className="object-cover object-left w-[400%] h-[400%] "
+                  priority
+                  
+                />
+              </div>
+            </motion.div>
           </div>
           
           {/* Subtle decorative border */}
@@ -136,38 +137,40 @@ export default function Home() {
         </div>
         
         {/* Mid section with profile image and text */}
-        <div className="relative flex px-6 items-center mb-12 mid-section mt-9">
+        <div className="relative flex flex-col sm:flex-row px-4 sm:px-6 items-center mb-8 sm:mb-12 mid-section mt-20">
           {/* Profile image as ellipse that partially overlaps header */}
           <motion.div 
-            className="w-[145px] h-[211px] elliptical-image overflow-hidden border border-pink-900/20 profile-border shadow-xl relative -top-16 z-20"
+            className="w-[250px] h-[300px] sm:w-[250px] sm:h-[100px] elliptical-image overflow-hidden relative -top-16 z-20"
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={{ opacity: 0.8, scale: 1 }}
             transition={{ delay: 0.8, duration: 0.5 }}
           >
-            <Image 
-              src="https://m.media-amazon.com/images/S/aplus-media-library-service-media/1118404b-0242-4525-9029-094b4b6b4261.__CR0,0,362,453_PT0_SX362_V1___.jpg" 
-              alt="Hair Engineer Profile" 
-              fill
-              className="object-cover"
-              priority
-            />
+            <div className="absolute top-0 left-0 w-[200%] h-[200%] transform origin-top-left scale-50">
+              <Image 
+                src="/images/profile_image.png" 
+                alt="Hair Engineer Profile" 
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
             {/* Add subtle shadow/glow effect with light pink hue */}
-            <div className="absolute inset-0 shadow-inner ring-1 ring-pink-300/10"></div>
+            
           </motion.div>
           
           {/* Experience section pushed to the right */}
           <motion.div 
-            className="text-right flex-1 pl-4 ml-2 relative top-6"
+            className="text-center sm:text-right flex-1 sm:pl-4 sm:ml-2 relative sm:top-6 mt-4 sm:mt-0"
             variants={itemVariants}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.9, duration: 0.5 }}
           >
             <h2 className="script-font text-3xl mb-2 font-light text-gradient">Experience The Best</h2>
-            <p className="text-[11px] text-gray-400 mb-3 leading-relaxed">
+            <p className="text-[11px] sm:text-xs md:text-sm text-gray-400 mb-3 leading-relaxed">
               Thank you for choosing The Hair Engineer. Your trust and loyalty mean the world to me.
             </p>
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-center sm:justify-end">
               <p className="script-font text-xl font-light">-Vanessa</p>
               <motion.span 
                 className="ml-1 text-pink-300/50 cursor-pointer hover:text-pink-300 transition-colors duration-200"
@@ -184,14 +187,14 @@ export default function Home() {
         
         {/* Main content section */}
         <motion.section 
-          className="flex-1 flex flex-col px-6 serif-font"
+          className="flex-1 flex flex-col px-4 sm:px-6 serif-font"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           {/* Additional explanation text */}
           <motion.p 
-            className="text-[11px] text-gray-400 mb-6 leading-relaxed text-center"
+            className="text-[11px] sm:text-xs md:text-sm text-gray-400 mb-6 leading-relaxed text-center"
             variants={itemVariants}
           >
             To ensure you receive the best experience, please be sure to read the booking policies below!
@@ -199,14 +202,14 @@ export default function Home() {
           
           {/* Contact information with subtle styling */}
           <motion.div 
-            className="flex justify-center space-x-5 mb-6"
+            className="flex flex-wrap justify-center gap-x-5 gap-y-2 mb-6"
             variants={itemVariants}
           >
-            <a href="tel:(123)-456-7890" className="flex items-center text-gray-400 hover:text-pink-200 transition-colors duration-300 text-[10px]">
+            <a href="tel:(123)-456-7890" className="flex items-center text-gray-400 hover:text-pink-200 transition-colors duration-300 text-[10px] sm:text-xs">
               <Phone size={12} className="mr-1" />
               (123)-456-7890
             </a>
-            <a href="mailto:youremail@address.com" className="flex items-center text-gray-400 hover:text-pink-200 transition-colors duration-300 text-[10px]">
+            <a href="mailto:thehairengineer.gh@gmail.com" className="flex items-center text-gray-400 hover:text-pink-200 transition-colors duration-300 text-[10px] sm:text-xs">
               <Mail size={12} className="mr-1" />
               thehairengineer.gh@gmail.com
             </a>
@@ -214,49 +217,52 @@ export default function Home() {
           
           {/* Booking policies in 2x2 grid with fine-tuned spacing and subtle pink accents */}
           <motion.div 
-            className="grid grid-cols-2 gap-x-5 gap-y-6 mb-10 policy-grid bg-glossy"
+            className="mb-10 bg-black-900/90 backdrop-blur-sm rounded-lg shadow-lg p-4 sm:p-6 border border-pink-500/20"
             variants={itemVariants}
           >
-            <motion.div 
-              className="text-center p-3 rounded-sm hover:bg-pink-950/20 policy-card"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h3 className="serif-font font-bold text-sm uppercase mb-1.5 tracking-wider">Lateness</h3>
-              <p className="text-[10px] text-gray-400 leading-relaxed">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
-              </p>
-            </motion.div>
-            <motion.div 
-              className="text-center p-3 rounded-sm hover:bg-pink-950/20 policy-card"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h3 className="serif-font font-bold text-sm uppercase mb-1.5 tracking-wider">Payment</h3>
-              <p className="text-[10px] text-gray-400 leading-relaxed">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
-              </p>
-            </motion.div>
-            <motion.div 
-              className="text-center p-3 rounded-sm hover:bg-pink-950/20 policy-card"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h3 className="serif-font font-bold text-sm uppercase mb-1.5 tracking-wider">Reschedules</h3>
-              <p className="text-[10px] text-gray-400 leading-relaxed">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
-              </p>
-            </motion.div>
-            <motion.div 
-              className="text-center p-3 rounded-sm hover:bg-pink-950/20 policy-card"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h3 className="serif-font font-bold text-sm uppercase mb-1.5 tracking-wider">Prep</h3>
-              <p className="text-[10px] text-gray-400 leading-relaxed">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
-              </p>
-            </motion.div>
+            <h2 className="text-center text-xl mb-4 font-semibold text-pink-400 serif-font">Booking Policies</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6 policy-grid">
+              <motion.div 
+                className="p-4 rounded-lg hover:bg-pink-950/20 policy-card border border-pink-500/10 shadow-md"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">Lateness</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
+                </p>
+              </motion.div>
+              <motion.div 
+                className="p-4 rounded-lg hover:bg-pink-950/20 policy-card border border-pink-500/10 shadow-md"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">Payment</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
+                </p>
+              </motion.div>
+              <motion.div 
+                className="p-4 rounded-lg hover:bg-pink-950/20 policy-card border border-pink-500/10 shadow-md"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">Reschedules</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
+                </p>
+              </motion.div>
+              <motion.div 
+                className="p-4 rounded-lg hover:bg-pink-950/20 policy-card border border-pink-500/10 shadow-md"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">Prep</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
+                </p>
+              </motion.div>
+            </div>
           </motion.div>
           
           {/* Conditional Scroll indicator that appears after clicking Book button */}
@@ -306,7 +312,11 @@ export default function Home() {
           </motion.p>
           
           {/* Appointment form would appear when terms are accepted */}
-          {acceptedTerms && <AppointmentForm />}
+          {acceptedTerms && (
+            <div className="w-full max-w-2xl mx-auto">
+              <AppointmentForm />
+            </div>
+          )}
         </motion.section>
       </motion.div>
     </div>

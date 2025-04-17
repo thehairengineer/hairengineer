@@ -1,5 +1,7 @@
 import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import jwt from 'jsonwebtoken';
+import { JWT } from 'next-auth/jwt';
 
 // Create a simpler authentication provider for admin login
 export const authOptions: NextAuthOptions = {
@@ -32,10 +34,21 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   
-  // Session configuration - shorter session for testing
+  // Session configuration - longer session for production
   session: {
     strategy: 'jwt',
-    maxAge: 2 * 60 * 60, // 2 hours
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  
+  // JWT configuration to fix "Invalid Compact JWE" errors
+  jwt: {
+    // Explicitly disable encryption to prevent JWE errors
+    encode: async ({ secret, token }) => {
+      return jwt.sign(token as any, secret);
+    },
+    decode: async ({ secret, token }) => {
+      return jwt.verify(token as string, secret) as JWT;
+    },
   },
   
   // Pages - simple configuration

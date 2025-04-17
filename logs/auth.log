@@ -1,0 +1,9 @@
+[2025-04-17T18:04:24.198Z] [DEBUG] [AUTH] Getting user from token
+[2025-04-17T18:04:24.202Z] [DEBUG] [AUTH] Retrieving token from cookies
+[2025-04-17T18:04:24.203Z] [DEBUG] [AUTH] Retrieving token from middleware request
+[2025-04-17T18:04:24.464Z] [DEBUG] [AUTH] Getting user from token
+[2025-04-17T18:04:24.466Z] [DEBUG] [AUTH] Retrieving token from cookies
+[2025-04-17T18:04:24.467Z] [DEBUG] [AUTH] Retrieving token from server action
+[2025-04-17T18:04:24.480Z] [DEBUG] [AUTH] Getting user from token
+[2025-04-17T18:04:24.481Z] [DEBUG] [AUTH] Retrieving token from cookies
+[2025-04-17T18:04:24.482Z] [DEBUG] [AUTH] Retrieving token from server action

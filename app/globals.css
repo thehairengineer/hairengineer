@@ -2,897 +2,1265 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom fonts for Hair Engineer theme */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&display=swap');
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 10, 10, 10;
+}
 
 body {
-  font-family: 'Montserrat', sans-serif;
-  background-color: black;
-  color: white;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
-/* Typography specific styles */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Noto Serif Display', serif;
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-josefin;
+  }
 }
 
-.italic, 
-i, 
-em, 
-.font-italic {
-  font-family: 'Cormorant Garamond', serif;
-}
+@layer components {
+  .btn {
+    @apply rounded-md px-3 py-1.5 text-sm font-medium text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2;
+  }
 
-/* Custom class for script font */
-.script-font {
-  font-family: 'Herr Von Muellerhoff', cursive;
-  letter-spacing: 0.02em;
-  font-size: 1.25em;
-  line-height: 1;
-  font-weight: 400;
-}
+  .btn-primary {
+    @apply bg-pink-neon hover:bg-pink-bright focus-visible:outline-pink-600 transition-colors duration-200 shadow-neon-pink;
+  }
 
-/* Custom class for serif body font */
-.serif-font {
-  font-family: 'Noto Serif Display', serif;
-}
+  .btn-secondary {
+    @apply bg-dark-200 border border-pink-neon hover:bg-dark-300 hover:border-pink-bright focus-visible:outline-pink-600 transition-colors duration-200;
+  }
 
-/* Glossy black background effect */
-.bg-glossy {
-  background-color: #000000;
-  background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
-  position: relative;
-}
+  .btn-delete {
+    @apply bg-red-500 hover:bg-red-700 focus-visible:outline-red-500;
+  }
 
-.bg-glossy::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 60%;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
-  pointer-events: none;
-  z-index: 0;
-}
+  .link {
+    @apply text-pink-neon hover:text-pink-bright hover:underline transition-colors duration-200;
+  }
+  
+  .input-field {
+    @apply border-0 py-1.5 text-white shadow-sm ring-1 ring-inset ring-dark-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-pink-neon bg-dark-200 rounded-md px-3;
+  }
+  
+  .card {
+    @apply bg-dark-200 rounded-lg shadow-md border border-dark-300 hover:border-pink-neon transition-colors duration-200;
+  }
+  
+  .nav-item {
+    @apply px-3 py-2 text-sm font-medium transition-colors duration-200;
+  }
+  
+  .nav-item-active {
+    @apply text-pink-neon font-bold;
+  }
+  
+  .nav-item-inactive {
+    @apply text-gray-300 hover:text-pink-bright;
+  }
 
-/* Policy card with vertical borders */
-.policy-grid {
-  position: relative;
-}
+  /* Custom fonts for Hair Engineer theme */
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&display=swap');
 
-/* Add vertical divider in the cross-section */
-.policy-grid::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.15), transparent);
-  z-index: 1;
-}
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: black;
+    color: white;
+  }
 
-.policy-card {
-  position: relative;
-  border-radius: 2px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
-  backdrop-filter: blur(5px);
-  /* Remove individual card borders */
-  transition: all 0.3s ease;
-}
+  /* Typography specific styles */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Noto Serif Display', serif;
+  }
 
-.policy-card:hover {
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-  background: linear-gradient(rgba(20, 20, 20, 0.7), rgba(10, 10, 10, 0.9));
-  /* Remove hover border styles */
-}
+  .italic, 
+  i, 
+  em, 
+  .font-italic {
+    font-family: 'Cormorant Garamond', serif;
+  }
 
-/* Updated datepicker styles for dark theme */
-.react-datepicker {
-  @apply !bg-black/90 !border-gray-800 !font-['Noto_Serif_Display'];
-}
+  /* Custom class for script font */
+  .script-font {
+    font-family: 'Herr Von Muellerhoff', cursive;
+    letter-spacing: 0.02em;
+    font-size: 1.25em;
+    line-height: 1;
+    font-weight: 400;
+  }
 
-.react-datepicker__header {
-  @apply !bg-black/90 !border-gray-800;
-}
+  /* Custom class for serif body font */
+  .serif-font {
+    font-family: 'Noto Serif Display', serif;
+  }
 
-.react-datepicker__current-month,
-.react-datepicker__day-name,
-.react-datepicker__day {
-  @apply !text-white;
-}
+  /* Glossy black background effect */
+  /* .bg-glossy {
+    background-color: #000000;
+    background-image: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+    position: relative;
+  } */
 
-.react-datepicker__day:hover {
-  @apply !bg-pink-500/20 !text-pink-200;
-}
+  /* .bg-glossy::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 60%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
+    pointer-events: none;
+    z-index: 0;
+  } */
 
-.react-datepicker__day--selected {
-  @apply !bg-pink-500 !text-white;
-}
+  /* Policy card with vertical borders */
+  .policy-grid {
+    position: relative;
+  }
 
-.react-datepicker__day--disabled {
-  @apply !text-gray-600;
-}
+  /* Add vertical divider in the cross-section */
+  .policy-grid::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.15), transparent);
+    z-index: 1;
+  }
 
-.react-datepicker__navigation-icon::before {
-  @apply !border-white;
-}
+  .policy-card {
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+    backdrop-filter: blur(5px);
+    /* Remove individual card borders */
+    transition: all 0.3s ease;
+  }
 
-.react-datepicker__day--keyboard-selected {
-  @apply !bg-pink-500/50 !text-white;
-}
+  .policy-card:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(rgba(20, 20, 20, 0.7), rgba(10, 10, 10, 0.9));
+    /* Remove hover border styles */
+  }
 
-/* Custom animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  /* Updated datepicker styles for dark theme */
+  .react-datepicker {
+    @apply !bg-black/90 !border-gray-800 !font-['Noto_Serif_Display'];
+  }
 
-.animate-fadeIn {
-  animation: fadeIn 0.5s ease-in-out;
-}
+  .react-datepicker__header {
+    @apply !bg-black/90 !border-gray-800;
+  }
 
-/* Custom button styles */
-.lash-button {
-  @apply w-full py-3 uppercase tracking-widest border border-white transition-all duration-300 text-sm;
-}
+  .react-datepicker__current-month,
+  .react-datepicker__day-name,
+  .react-datepicker__day {
+    @apply !text-white;
+  }
 
-.lash-button:hover {
-  @apply bg-white text-black;
-}
+  .react-datepicker__day:hover {
+    @apply !bg-pink-500/20 !text-pink-200;
+  }
 
-/* Form input styles */
-.lash-input {
-  @apply bg-transparent border border-gray-700 text-white px-4 py-3 w-full focus:border-white focus:outline-none transition-colors duration-200 text-sm;
-}
+  .react-datepicker__day--selected {
+    @apply !bg-pink-500 !text-white;
+  }
 
-.lash-label {
-  @apply text-gray-400 text-xs uppercase tracking-wide mb-1 font-['Noto_Serif_Display'];
-}
+  .react-datepicker__day--disabled {
+    @apply !text-gray-600;
+  }
 
-/* Selection styles */
-::selection {
-  background-color: white;
-  color: black;
-}
+  .react-datepicker__navigation-icon::before {
+    @apply !border-white;
+  }
 
-/* Mobile view container - optimized for mobile simulator */
-.mobile-view-container {
-  max-width: 100%;
-  width: 390px;
-  margin: 0 auto;
-  height: 100vh;
-  overflow-y: auto;
-  position: relative;
-}
+  .react-datepicker__day--keyboard-selected {
+    @apply !bg-pink-500/50 !text-white;
+  }
 
-/* When inside mobile simulator or small viewport */
-@media (max-width: 430px) {
+  /* Custom animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  /* Custom button styles */
+  .lash-button {
+    @apply w-full py-3 uppercase tracking-widest border border-white transition-all duration-300 text-sm;
+  }
+
+  .lash-button:hover {
+    @apply bg-white text-black;
+  }
+
+  /* Form input styles */
+  .lash-input {
+    @apply bg-transparent border border-gray-700 text-white px-4 py-3 w-full focus:border-white focus:outline-none transition-colors duration-200 text-sm;
+  }
+
+  .lash-label {
+    @apply text-gray-400 text-xs uppercase tracking-wide mb-1 font-['Noto_Serif_Display'];
+  }
+
+  /* Selection styles */
+  ::selection {
+    background-color: white;
+    color: black;
+  }
+
+  /* Mobile view container - optimized for mobile simulator */
   .mobile-view-container {
-    width: 100%;
     max-width: 100%;
+    width: 390px;
+    margin: 0 auto;
+    height: 100vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* When inside mobile simulator or small viewport */
+  @media (max-width: 430px) {
+    .mobile-view-container {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  /* Fancy border effect for profile image as seen in the design */
+  .profile-border {
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+  }
+
+  .profile-border::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent, rgba(255,255,255,0.15), transparent);
+    z-index: -1;
+  }
+
+  /* Header background section */
+  .header-section {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at top left, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+    z-index: 1;
+  }
+
+  /* Subtle photo shimmer effect */
+  @keyframes shimmer {
+    0% {
+      opacity: 0.7;
+    }
+    50% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0.7;
+    }
+  }
+
+  .photo-shimmer {
+    animation: shimmer 3s infinite ease-in-out;
+  }
+
+  /* Elliptical profile image styles */
+  .elliptical-image {
+    border-radius: 60px / 80px;
+    shape-outside: ellipse(50% 70% at 50% 50%);
+  }
+
+  /* Text gradient effect */
+  .text-gradient {
+    background: linear-gradient(to right, #fff, #ccc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+
+  /* Mid-section layout */
+  .mid-section {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  .mid-section::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent);
+  }
+
+  /* Scroll unfolding animation */
+  @keyframes scrollUnfold {
+    0% {
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      max-height: 500px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .scroll-calendar-container {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: rgba(41, 37, 36, 0.7);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+  }
+
+  .scroll-top, .scroll-bottom {
+    position: relative;
+    z-index: 10;
+    border-radius: 4px;
+  }
+
+  .scroll-top {
+    background: linear-gradient(to bottom, rgba(120, 53, 15, 0.6), transparent);
+    border-top: 1px solid rgba(255, 215, 0, 0.2);
+  }
+
+  .scroll-bottom {
+    background: linear-gradient(to top, rgba(120, 53, 15, 0.6), transparent);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    transform: rotate(180deg);
+  }
+
+  .scroll-content {
+    padding: 0.5rem;
+    position: relative;
+    z-index: 5;
+  }
+
+  .scroll-calendar {
+    background-color: transparent !important;
+    border: none !important;
+    color: #fff !important;
+    font-family: 'Noto Serif Display', serif !important;
+  }
+
+  .react-datepicker {
+    background-color: rgba(23, 23, 23, 0.95) !important;
+    border: 1px solid rgba(255, 215, 0, 0.2) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .react-datepicker__header {
+    background-color: rgba(120, 53, 15, 0.3) !important;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2) !important;
+  }
+
+  .react-datepicker__day-name, 
+  .react-datepicker__day, 
+  .react-datepicker__time-name {
+    color: #d1d5db !important;
+  }
+
+  .react-datepicker__day:hover {
+    background-color: rgba(236, 72, 153, 0.3) !important;
+  }
+
+  .react-datepicker__day--selected {
+    background-color: #ec4899 !important;
+    color: white !important;
+  }
+
+  .react-datepicker__day--disabled {
+    color: #6b7280 !important;
+  }
+
+  .react-datepicker__current-month, 
+  .react-datepicker-time__header, 
+  .react-datepicker-year-header {
+    color: #d1d5db !important;
+    font-family: 'Noto Serif Display', serif !important;
+  }
+
+  .react-datepicker__navigation {
+    top: 8px !important;
+  }
+
+  .react-datepicker__navigation-icon::before {
+    border-color: #d1d5db !important;
+  }
+
+  .react-datepicker__navigation:hover *::before {
+    border-color: #ec4899 !important;
+  }
+
+  /* Custom animations */
+  @keyframes bounce-slow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(5px);
+    }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+  }
+
+  /* Custom dropdown select component */
+  .custom-dropdown {
+    @apply relative bg-black/60 border border-gray-800 rounded-lg w-full;
+  }
+
+  .custom-dropdown-label {
+    @apply text-xs text-gray-400 uppercase tracking-wide mb-1 font-['Noto_Serif_Display'];
+  }
+
+  .custom-dropdown-trigger {
+    @apply flex items-center justify-between w-full px-4 py-3 text-white text-sm font-['Noto_Serif_Display'] cursor-pointer;
+  }
+
+  .custom-dropdown-options {
+    @apply absolute left-0 right-0 mt-1 py-1 bg-black/90 border border-gray-800 rounded-lg shadow-lg z-20 
+           max-h-60 overflow-y-auto backdrop-blur-sm transform transition-all duration-200 origin-top;
+  }
+
+  .custom-dropdown-option {
+    @apply px-4 py-2.5 hover:bg-pink-500/20 cursor-pointer text-sm text-white transition-colors;
+  }
+
+  .custom-dropdown-option.selected {
+    @apply bg-pink-500/30 text-pink-200;
+  }
+
+  .custom-dropdown-option:first-child {
+    @apply rounded-t-lg;
+  }
+
+  .custom-dropdown-option:last-child {
+    @apply rounded-b-lg;
+  }
+
+  .custom-dropdown-chevron {
+    @apply transition-transform duration-200;
+  }
+
+  .custom-dropdown.open .custom-dropdown-chevron {
+    @apply rotate-180;
+  }
+
+  /* Dropdown opening/closing animations */
+  @keyframes dropdownOpen {
+    from {
+      opacity: 0;
+      transform: translateY(-10px) scaleY(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+  }
+
+  @keyframes dropdownClose {
+    from {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px) scaleY(0.9);
+    }
+  }
+
+  .dropdown-open {
+    animation: dropdownOpen 0.2s ease-out forwards;
+  }
+
+  .dropdown-close {
+    animation: dropdownClose 0.2s ease-in forwards;
+  }
+
+  /* Custom select for admin panel */
+  .admin-select {
+    @apply appearance-none bg-black/40 border border-gray-800 text-white rounded-lg px-4 py-2.5 pr-8
+           focus:outline-none focus:ring-1 focus:ring-pink-500 focus:border-pink-500 w-full
+           font-['Noto_Serif_Display'] text-sm transition-colors relative;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'%3E%3C/path%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+  }
+
+  .admin-select:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ec4899' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'%3E%3C/path%3E%3C/svg%3E");
+  }
+
+  .admin-select option {
+    @apply bg-black text-white py-2;
+  }
+
+  /* Button group styles */
+  .admin-button-group {
+    @apply flex rounded-lg overflow-hidden;
+  }
+
+  .admin-button-group button {
+    @apply px-4 py-2 bg-black/40 border border-gray-800 first:rounded-l-lg last:rounded-r-lg -ml-px first:ml-0
+           text-sm text-gray-300 transition-colors hover:bg-pink-500/20 hover:text-pink-200 first:hover:border-r-gray-800;
+  }
+
+  .admin-button-group button.active {
+    @apply bg-pink-500/20 text-pink-200 border-pink-500/50;
+  }
+
+  /* Hide scrollbars but maintain scrolling functionality */
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  *::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* For tables with a fixed height */
+  .table-container {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  /* For date lists with a fixed height */
+  .date-container {
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  /* For category lists with a fixed height */
+  .category-container {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  /* For any container that needs scrolling with a fixed height */
+  .scroll-container {
+    overflow-y: auto;
+  }
+
+  /* Specific heights for different containers */
+  .scroll-container-sm {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .scroll-container-md {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .scroll-container-lg {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  /* Hide the 'hide-scrollbar' class which may already be used in the project */
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Specific class for admin tables */
+  .admin-table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Improved table styling for better responsiveness */
+  .admin-table {
+    width: 100%;
+    min-width: 800px; /* Ensures table has a minimum width to prevent squishing */
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+  }
+
+  .admin-table td.wrap-content {
+    white-space: normal;
+  }
+
+  .admin-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .admin-table thead {
+    position: sticky;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10;
+    backdrop-filter: blur(8px);
+  }
+
+  /* Responsive cell widths */
+  .admin-table .cell-xs {
+    width: 80px;
+  }
+
+  .admin-table .cell-sm {
+    width: 120px;
+  }
+
+  .admin-table .cell-md {
+    width: 180px;
+  }
+
+  .admin-table .cell-lg {
+    width: 240px;
+  }
+
+  .admin-table .cell-xl {
+    width: 300px;
+  }
+
+  /* Beautified table styles */
+  .admin-table {
+    @apply w-full border-collapse;
+  }
+
+  .admin-table thead {
+    @apply bg-black/60 backdrop-blur-sm;
+  }
+
+  .admin-table th {
+    @apply px-4 py-3 text-left text-xs font-['Noto_Serif_Display'] text-gray-400 uppercase tracking-wider border-b border-gray-800;
+  }
+
+  .admin-table tbody tr {
+    @apply border-b border-gray-800/50 transition-colors hover:bg-pink-500/5;
+  }
+
+  .admin-table td {
+    @apply px-4 py-3 text-sm text-gray-300;
+  }
+
+  .admin-table td .status-badge {
+    @apply px-2 py-0.5 text-xs rounded-full font-medium;
+  }
+
+  .admin-table td .status-badge.confirmed {
+    @apply bg-green-500/20 text-green-300;
+  }
+
+  .admin-table td .status-badge.pending {
+    @apply bg-yellow-500/20 text-yellow-300;
+  }
+
+  .admin-table td .status-badge.cancelled {
+    @apply bg-red-500/20 text-red-300;
+  }
+
+  /* Enhanced date picker styles for admin */
+  .admin-date-picker {
+    @apply !bg-black/90 !border-gray-800 !font-['Noto_Serif_Display'] !rounded-lg !p-4;
+  }
+
+  .admin-date-picker .react-datepicker__header {
+    @apply !bg-black/90 !border-gray-800 !p-0 !mb-4;
+  }
+
+  .admin-date-picker .react-datepicker__current-month {
+    @apply !text-white !text-lg !mb-4 !font-['Noto_Serif_Display'];
+  }
+
+  .admin-date-picker .react-datepicker__day-names {
+    @apply !mb-2;
+  }
+
+  .admin-date-picker .react-datepicker__day-name {
+    @apply !text-gray-400 !text-xs !w-8 !h-8 !leading-8 !m-0;
+  }
+
+  .admin-date-picker .react-datepicker__day {
+    @apply !text-white !text-sm !w-8 !h-8 !leading-8 !m-0 !rounded-full transition-colors;
+  }
+
+  .admin-date-picker .react-datepicker__day:hover {
+    @apply !bg-pink-500/20 !text-pink-200;
+  }
+
+  .admin-date-picker .react-datepicker__day--selected {
+    @apply !bg-pink-500 !text-white;
+  }
+
+  .admin-date-picker .react-datepicker__day--keyboard-selected {
+    @apply !bg-pink-500/50 !text-white;
+  }
+
+  .admin-date-picker .react-datepicker__day--disabled {
+    @apply !text-gray-600;
+  }
+
+  .admin-date-picker .react-datepicker__navigation-icon::before {
+    @apply !border-white;
+  }
+
+  /* Multi-date selection styles */
+  .admin-date-picker .react-datepicker__day--selecting-range-start,
+  .admin-date-picker .react-datepicker__day--selecting-range-end,
+  .admin-date-picker .react-datepicker__day--in-selecting-range {
+    @apply !bg-pink-500/30 !text-pink-200;
+  }
+
+  .admin-date-picker .react-datepicker__day--in-range {
+    @apply !bg-pink-500/20 !text-pink-200;
+  }
+
+  /* Hair styles manager enhancements */
+  .hair-style-card {
+    @apply bg-black/40 backdrop-blur-sm rounded-lg border border-gray-800 p-4 transition-all;
+  }
+
+  .hair-style-card:hover {
+    @apply border-pink-500/50 bg-black/60;
+  }
+
+  .hair-style-input {
+    @apply bg-black/40 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white 
+           focus:outline-none focus:border-pink-500 transition-colors w-full
+           font-['Noto_Serif_Display'];
+  }
+
+  .hair-style-button {
+    @apply bg-pink-500/20 text-pink-200 px-4 py-2 rounded-lg hover:bg-pink-500/30 
+           transition flex items-center justify-center gap-2 text-sm font-medium
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Custom scrollbar for dates list */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  @keyframes bounce-slow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(5px);
+    }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+  }
+
+  /* Custom dropdown select component */
+  .custom-dropdown {
+    @apply relative bg-black/60 border border-gray-800 rounded-lg w-full;
+  }
+
+  .custom-dropdown-label {
+    @apply text-xs text-gray-400 uppercase tracking-wide mb-1 font-['Noto_Serif_Display'];
+  }
+
+  .custom-dropdown-trigger {
+    @apply flex items-center justify-between w-full px-4 py-3 text-white text-sm font-['Noto_Serif_Display'] cursor-pointer;
+  }
+
+  .custom-dropdown-options {
+    @apply absolute left-0 right-0 mt-1 py-1 bg-black/90 border border-gray-800 rounded-lg shadow-lg z-20 
+           max-h-60 overflow-y-auto backdrop-blur-sm transform transition-all duration-200 origin-top;
+  }
+
+  .custom-dropdown-option {
+    @apply px-4 py-2.5 hover:bg-pink-500/20 cursor-pointer text-sm text-white transition-colors;
+  }
+
+  .custom-dropdown-option.selected {
+    @apply bg-pink-500/30 text-pink-200;
+  }
+
+  .custom-dropdown-option:first-child {
+    @apply rounded-t-lg;
+  }
+
+  .custom-dropdown-option:last-child {
+    @apply rounded-b-lg;
+  }
+
+  .custom-dropdown-chevron {
+    @apply transition-transform duration-200;
+  }
+
+  .custom-dropdown.open .custom-dropdown-chevron {
+    @apply rotate-180;
+  }
+
+  /* Dropdown opening/closing animations */
+  @keyframes dropdownOpen {
+    from {
+      opacity: 0;
+      transform: translateY(-10px) scaleY(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+  }
+
+  @keyframes dropdownClose {
+    from {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px) scaleY(0.9);
+    }
+  }
+
+  .dropdown-open {
+    animation: dropdownOpen 0.2s ease-out forwards;
+  }
+
+  .dropdown-close {
+    animation: dropdownClose 0.2s ease-in forwards;
+  }
+
+  /* Custom select for admin panel */
+  .admin-select {
+    @apply appearance-none bg-black/40 border border-gray-800 text-white rounded-lg px-4 py-2.5 pr-8
+           focus:outline-none focus:ring-1 focus:ring-pink-500 focus:border-pink-500 w-full
+           font-['Noto_Serif_Display'] text-sm transition-colors relative;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'%3E%3C/path%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+  }
+
+  .admin-select:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ec4899' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'%3E%3C/path%3E%3C/svg%3E");
+  }
+
+  .admin-select option {
+    @apply bg-black text-white py-2;
+  }
+
+  /* Button group styles */
+  .admin-button-group {
+    @apply flex rounded-lg overflow-hidden;
+  }
+
+  .admin-button-group button {
+    @apply px-4 py-2 bg-black/40 border border-gray-800 first:rounded-l-lg last:rounded-r-lg -ml-px first:ml-0
+           text-sm text-gray-300 transition-colors hover:bg-pink-500/20 hover:text-pink-200 first:hover:border-r-gray-800;
+  }
+
+  .admin-button-group button.active {
+    @apply bg-pink-500/20 text-pink-200 border-pink-500/50;
+  }
+
+  /* Modal fixes for mobile */
+  .fixed.inset-0.z-50.flex.items-center.justify-center,
+  .fixed.inset-0.bg-black.bg-opacity-70.flex.items-center.justify-center.z-50 {
+    align-items: flex-start;
+    padding: 1rem 0;
+    overflow-y: auto;
+  }
+
+  .fixed.inset-0.z-50.flex.items-center.justify-center > div,
+  .fixed.inset-0.bg-black.bg-opacity-70.flex.items-center.justify-center.z-50 > div {
+    margin: auto;
+    width: calc(100% - 2rem);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+
+  /* Ensure modals can be scrolled on mobile */
+  @media (max-width: 640px) {
+    .max-w-md {
+      max-width: 100%;
+    }
+    
+    .relative.bg-black\/90.backdrop-blur-lg,
+    .bg-gradient-to-b.from-gray-900.to-black {
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+      margin: 1rem auto;
+    }
+  }
+
+  /* Fix admin panel scrolling */
+  .admin-panel-container {
+    height: 100%;
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Custom scrollbar styles */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201, 92, 174, 0.5) rgba(0, 0, 0, 0.1);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(201, 92, 174, 0.5);
+    border-radius: 3px;
+  }
+
+  /* Hide scrollbar but still allow scrolling */
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Animation for bounce slow */
+  @keyframes bounce-slow {
+    0%, 100% {
+      transform: translateY(-10%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 2s infinite;
+  }
+
+  /* Mobile-first responsive utilities */
+  .mobile-container {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (min-width: 640px) {
+    .mobile-container {
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .mobile-container {
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-container {
+      max-width: 1024px;
+    }
+  }
+
+  /* Responsive text utilities */
+  .responsive-text-xs {
+    font-size: 0.75rem;
+  }
+
+  .responsive-text-sm {
+    font-size: 0.875rem;
+  }
+
+  .responsive-text-base {
+    font-size: 1rem;
+  }
+
+  .responsive-text-lg {
+    font-size: 1.125rem;
+  }
+
+  @media (min-width: 640px) {
+    .responsive-text-xs {
+      font-size: 0.875rem;
+    }
+    
+    .responsive-text-sm {
+      font-size: 1rem;
+    }
+    
+    .responsive-text-base {
+      font-size: 1.125rem;
+    }
+    
+    .responsive-text-lg {
+      font-size: 1.25rem;
+    }
   }
 }
 
-/* Fancy border effect for profile image as seen in the design */
-.profile-border {
-  position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
-}
-
-.profile-border::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent, rgba(255,255,255,0.15), transparent);
-  z-index: -1;
-}
-
-/* Header background section */
-.header-section {
-  position: relative;
-  overflow: hidden;
-}
-
-.header-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at top left, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
-  z-index: 1;
-}
-
-/* Subtle photo shimmer effect */
-@keyframes shimmer {
-  0% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 0.9;
-  }
-  100% {
-    opacity: 0.7;
+@layer utilities {
+  .max-w-md {
+    max-width: 42rem;
   }
 }
 
-.photo-shimmer {
-  animation: shimmer 3s infinite ease-in-out;
+/* Custom scrollbar for admin tables */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(236, 72, 153, 0.4) rgba(0, 0, 0, 0.2);
 }
 
-/* Elliptical profile image styles */
-.elliptical-image {
-  border-radius: 60px / 80px;
-  shape-outside: ellipse(50% 70% at 50% 50%);
-}
-
-/* Text gradient effect */
-.text-gradient {
-  background: linear-gradient(to right, #fff, #ccc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-}
-
-/* Mid-section layout */
-.mid-section {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.mid-section::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent);
-}
-
-/* Scroll unfolding animation */
-@keyframes scrollUnfold {
-  0% {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    max-height: 500px;
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.scroll-calendar-container {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: rgba(41, 37, 36, 0.7);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 215, 0, 0.1);
-}
-
-.scroll-top, .scroll-bottom {
-  position: relative;
-  z-index: 10;
-  border-radius: 4px;
-}
-
-.scroll-top {
-  background: linear-gradient(to bottom, rgba(120, 53, 15, 0.6), transparent);
-  border-top: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-.scroll-bottom {
-  background: linear-gradient(to top, rgba(120, 53, 15, 0.6), transparent);
-  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-  transform: rotate(180deg);
-}
-
-.scroll-content {
-  padding: 0.5rem;
-  position: relative;
-  z-index: 5;
-}
-
-.scroll-calendar {
-  background-color: transparent !important;
-  border: none !important;
-  color: #fff !important;
-  font-family: 'Noto Serif Display', serif !important;
-}
-
-.react-datepicker {
-  background-color: rgba(23, 23, 23, 0.95) !important;
-  border: 1px solid rgba(255, 215, 0, 0.2) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
-}
-
-.react-datepicker__header {
-  background-color: rgba(120, 53, 15, 0.3) !important;
-  border-bottom: 1px solid rgba(255, 215, 0, 0.2) !important;
-}
-
-.react-datepicker__day-name, 
-.react-datepicker__day, 
-.react-datepicker__time-name {
-  color: #d1d5db !important;
-}
-
-.react-datepicker__day:hover {
-  background-color: rgba(236, 72, 153, 0.3) !important;
-}
-
-.react-datepicker__day--selected {
-  background-color: #ec4899 !important;
-  color: white !important;
-}
-
-.react-datepicker__day--disabled {
-  color: #6b7280 !important;
-}
-
-.react-datepicker__current-month, 
-.react-datepicker-time__header, 
-.react-datepicker-year-header {
-  color: #d1d5db !important;
-  font-family: 'Noto Serif Display', serif !important;
-}
-
-.react-datepicker__navigation {
-  top: 8px !important;
-}
-
-.react-datepicker__navigation-icon::before {
-  border-color: #d1d5db !important;
-}
-
-.react-datepicker__navigation:hover *::before {
-  border-color: #ec4899 !important;
-}
-
-/* Custom animations */
-@keyframes bounce-slow {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
-}
-
-.animate-bounce-slow {
-  animation: bounce-slow 2s ease-in-out infinite;
-}
-
-/* Custom dropdown select component */
-.custom-dropdown {
-  @apply relative bg-black/60 border border-gray-800 rounded-lg w-full;
-}
-
-.custom-dropdown-label {
-  @apply text-xs text-gray-400 uppercase tracking-wide mb-1 font-['Noto_Serif_Display'];
-}
-
-.custom-dropdown-trigger {
-  @apply flex items-center justify-between w-full px-4 py-3 text-white text-sm font-['Noto_Serif_Display'] cursor-pointer;
-}
-
-.custom-dropdown-options {
-  @apply absolute left-0 right-0 mt-1 py-1 bg-black/90 border border-gray-800 rounded-lg shadow-lg z-20 
-         max-h-60 overflow-y-auto backdrop-blur-sm transform transition-all duration-200 origin-top;
-}
-
-.custom-dropdown-option {
-  @apply px-4 py-2.5 hover:bg-pink-500/20 cursor-pointer text-sm text-white transition-colors;
-}
-
-.custom-dropdown-option.selected {
-  @apply bg-pink-500/30 text-pink-200;
-}
-
-.custom-dropdown-option:first-child {
-  @apply rounded-t-lg;
-}
-
-.custom-dropdown-option:last-child {
-  @apply rounded-b-lg;
-}
-
-.custom-dropdown-chevron {
-  @apply transition-transform duration-200;
-}
-
-.custom-dropdown.open .custom-dropdown-chevron {
-  @apply rotate-180;
-}
-
-/* Dropdown opening/closing animations */
-@keyframes dropdownOpen {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scaleY(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scaleY(1);
-  }
-}
-
-@keyframes dropdownClose {
-  from {
-    opacity: 1;
-    transform: translateY(0) scaleY(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px) scaleY(0.9);
-  }
-}
-
-.dropdown-open {
-  animation: dropdownOpen 0.2s ease-out forwards;
-}
-
-.dropdown-close {
-  animation: dropdownClose 0.2s ease-in forwards;
-}
-
-/* Custom select for admin panel */
-.admin-select {
-  @apply appearance-none bg-black/40 border border-gray-800 text-white rounded-lg px-4 py-2.5 pr-8
-         focus:outline-none focus:ring-1 focus:ring-pink-500 focus:border-pink-500 w-full
-         font-['Noto_Serif_Display'] text-sm transition-colors relative;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'%3E%3C/path%3E%3C/svg%3E");
-  background-position: right 0.5rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-}
-
-.admin-select:focus {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ec4899' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'%3E%3C/path%3E%3C/svg%3E");
-}
-
-.admin-select option {
-  @apply bg-black text-white py-2;
-}
-
-/* Button group styles */
-.admin-button-group {
-  @apply flex rounded-lg overflow-hidden;
-}
-
-.admin-button-group button {
-  @apply px-4 py-2 bg-black/40 border border-gray-800 first:rounded-l-lg last:rounded-r-lg -ml-px first:ml-0
-         text-sm text-gray-300 transition-colors hover:bg-pink-500/20 hover:text-pink-200 first:hover:border-r-gray-800;
-}
-
-.admin-button-group button.active {
-  @apply bg-pink-500/20 text-pink-200 border-pink-500/50;
-}
-
-/* Hide scrollbars but maintain scrolling functionality */
-* {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-
-*::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
-
-/* For tables with a fixed height */
-.table-container {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-/* For date lists with a fixed height */
-.date-container {
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-/* For category lists with a fixed height */
-.category-container {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-/* For any container that needs scrolling with a fixed height */
-.scroll-container {
-  overflow-y: auto;
-}
-
-/* Specific heights for different containers */
-.scroll-container-sm {
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.scroll-container-md {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.scroll-container-lg {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-/* Hide the 'hide-scrollbar' class which may already be used in the project */
-.hide-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* Specific class for admin tables */
-.admin-table-wrapper {
-  max-height: 400px;
-  overflow-y: auto;
-  overflow-x: auto;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 0;
-  margin-bottom: 1.5rem;
-}
-
-/* Improved table styling for better responsiveness */
-.admin-table {
-  width: 100%;
-  min-width: 800px; /* Ensures table has a minimum width to prevent squishing */
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.admin-table th,
-.admin-table td {
-  padding: 12px 16px;
-  text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  white-space: nowrap;
-}
-
-.admin-table td.wrap-content {
-  white-space: normal;
-}
-
-.admin-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.admin-table thead {
-  position: sticky;
-  top: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 10;
-  backdrop-filter: blur(8px);
-}
-
-/* Responsive cell widths */
-.admin-table .cell-xs {
-  width: 80px;
-}
-
-.admin-table .cell-sm {
-  width: 120px;
-}
-
-.admin-table .cell-md {
-  width: 180px;
-}
-
-.admin-table .cell-lg {
-  width: 240px;
-}
-
-.admin-table .cell-xl {
-  width: 300px;
-}
-
-/* Beautified table styles */
-.admin-table {
-  @apply w-full border-collapse;
-}
-
-.admin-table thead {
-  @apply bg-black/60 backdrop-blur-sm;
-}
-
-.admin-table th {
-  @apply px-4 py-3 text-left text-xs font-['Noto_Serif_Display'] text-gray-400 uppercase tracking-wider border-b border-gray-800;
-}
-
-.admin-table tbody tr {
-  @apply border-b border-gray-800/50 transition-colors hover:bg-pink-500/5;
-}
-
-.admin-table td {
-  @apply px-4 py-3 text-sm text-gray-300;
-}
-
-.admin-table td .status-badge {
-  @apply px-2 py-0.5 text-xs rounded-full font-medium;
-}
-
-.admin-table td .status-badge.confirmed {
-  @apply bg-green-500/20 text-green-300;
-}
-
-.admin-table td .status-badge.pending {
-  @apply bg-yellow-500/20 text-yellow-300;
-}
-
-.admin-table td .status-badge.cancelled {
-  @apply bg-red-500/20 text-red-300;
-}
-
-/* Enhanced date picker styles for admin */
-.admin-date-picker {
-  @apply !bg-black/90 !border-gray-800 !font-['Noto_Serif_Display'] !rounded-lg !p-4;
-}
-
-.admin-date-picker .react-datepicker__header {
-  @apply !bg-black/90 !border-gray-800 !p-0 !mb-4;
-}
-
-.admin-date-picker .react-datepicker__current-month {
-  @apply !text-white !text-lg !mb-4 !font-['Noto_Serif_Display'];
-}
-
-.admin-date-picker .react-datepicker__day-names {
-  @apply !mb-2;
-}
-
-.admin-date-picker .react-datepicker__day-name {
-  @apply !text-gray-400 !text-xs !w-8 !h-8 !leading-8 !m-0;
-}
-
-.admin-date-picker .react-datepicker__day {
-  @apply !text-white !text-sm !w-8 !h-8 !leading-8 !m-0 !rounded-full transition-colors;
-}
-
-.admin-date-picker .react-datepicker__day:hover {
-  @apply !bg-pink-500/20 !text-pink-200;
-}
-
-.admin-date-picker .react-datepicker__day--selected {
-  @apply !bg-pink-500 !text-white;
-}
-
-.admin-date-picker .react-datepicker__day--keyboard-selected {
-  @apply !bg-pink-500/50 !text-white;
-}
-
-.admin-date-picker .react-datepicker__day--disabled {
-  @apply !text-gray-600;
-}
-
-.admin-date-picker .react-datepicker__navigation-icon::before {
-  @apply !border-white;
-}
-
-/* Multi-date selection styles */
-.admin-date-picker .react-datepicker__day--selecting-range-start,
-.admin-date-picker .react-datepicker__day--selecting-range-end,
-.admin-date-picker .react-datepicker__day--in-selecting-range {
-  @apply !bg-pink-500/30 !text-pink-200;
-}
-
-.admin-date-picker .react-datepicker__day--in-range {
-  @apply !bg-pink-500/20 !text-pink-200;
-}
-
-/* Hair styles manager enhancements */
-.hair-style-card {
-  @apply bg-black/40 backdrop-blur-sm rounded-lg border border-gray-800 p-4 transition-all;
-}
-
-.hair-style-card:hover {
-  @apply border-pink-500/50 bg-black/60;
-}
-
-.hair-style-input {
-  @apply bg-black/40 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white 
-         focus:outline-none focus:border-pink-500 transition-colors w-full
-         font-['Noto_Serif_Display'];
-}
-
-.hair-style-button {
-  @apply bg-pink-500/20 text-pink-200 px-4 py-2 rounded-lg hover:bg-pink-500/30 
-         transition flex items-center justify-center gap-2 text-sm font-medium
-         disabled:opacity-50 disabled:cursor-not-allowed;
-}
-
-/* Custom scrollbar for dates list */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+  border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
+  background-color: rgba(236, 72, 153, 0.4);
+  border-radius: 4px;
+  border: 2px solid transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background-color: rgba(236, 72, 153, 0.6);
 }
 
-@keyframes bounce-slow {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
+/* Admin panel black and pink theme */
+.admin-panel {
+  --admin-bg: #000000;
+  --admin-bg-alt: #0a0a0a;
+  --admin-border: rgba(236, 72, 153, 0.2);
+  --admin-accent: rgb(236, 72, 153);
+  --admin-text: #ffffff;
+  --admin-text-muted: rgba(229, 231, 235, 0.7);
 }
 
-.animate-bounce-slow {
-  animation: bounce-slow 2s ease-in-out infinite;
-}
-
-/* Custom dropdown select component */
-.custom-dropdown {
-  @apply relative bg-black/60 border border-gray-800 rounded-lg w-full;
-}
-
-.custom-dropdown-label {
-  @apply text-xs text-gray-400 uppercase tracking-wide mb-1 font-['Noto_Serif_Display'];
-}
-
-.custom-dropdown-trigger {
-  @apply flex items-center justify-between w-full px-4 py-3 text-white text-sm font-['Noto_Serif_Display'] cursor-pointer;
-}
-
-.custom-dropdown-options {
-  @apply absolute left-0 right-0 mt-1 py-1 bg-black/90 border border-gray-800 rounded-lg shadow-lg z-20 
-         max-h-60 overflow-y-auto backdrop-blur-sm transform transition-all duration-200 origin-top;
-}
-
-.custom-dropdown-option {
-  @apply px-4 py-2.5 hover:bg-pink-500/20 cursor-pointer text-sm text-white transition-colors;
-}
-
-.custom-dropdown-option.selected {
-  @apply bg-pink-500/30 text-pink-200;
-}
-
-.custom-dropdown-option:first-child {
-  @apply rounded-t-lg;
-}
-
-.custom-dropdown-option:last-child {
-  @apply rounded-b-lg;
-}
-
-.custom-dropdown-chevron {
-  @apply transition-transform duration-200;
-}
-
-.custom-dropdown.open .custom-dropdown-chevron {
-  @apply rotate-180;
-}
-
-/* Dropdown opening/closing animations */
-@keyframes dropdownOpen {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scaleY(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scaleY(1);
-  }
-}
-
-@keyframes dropdownClose {
-  from {
-    opacity: 1;
-    transform: translateY(0) scaleY(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px) scaleY(0.9);
-  }
-}
-
-.dropdown-open {
-  animation: dropdownOpen 0.2s ease-out forwards;
-}
-
-.dropdown-close {
-  animation: dropdownClose 0.2s ease-in forwards;
-}
-
-/* Custom select for admin panel */
-.admin-select {
-  @apply appearance-none bg-black/40 border border-gray-800 text-white rounded-lg px-4 py-2.5 pr-8
-         focus:outline-none focus:ring-1 focus:ring-pink-500 focus:border-pink-500 w-full
-         font-['Noto_Serif_Display'] text-sm transition-colors relative;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'%3E%3C/path%3E%3C/svg%3E");
-  background-position: right 0.5rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-}
-
-.admin-select:focus {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ec4899' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'%3E%3C/path%3E%3C/svg%3E");
-}
-
-.admin-select option {
-  @apply bg-black text-white py-2;
-}
-
-/* Button group styles */
-.admin-button-group {
-  @apply flex rounded-lg overflow-hidden;
-}
-
-.admin-button-group button {
-  @apply px-4 py-2 bg-black/40 border border-gray-800 first:rounded-l-lg last:rounded-r-lg -ml-px first:ml-0
-         text-sm text-gray-300 transition-colors hover:bg-pink-500/20 hover:text-pink-200 first:hover:border-r-gray-800;
-}
-
-.admin-button-group button.active {
-  @apply bg-pink-500/20 text-pink-200 border-pink-500/50;
-}
-
-/* Modal fixes for mobile */
-.fixed.inset-0.z-50.flex.items-center.justify-center,
-.fixed.inset-0.bg-black.bg-opacity-70.flex.items-center.justify-center.z-50 {
-  align-items: flex-start;
-  padding: 1rem 0;
+/* Fixed height tables with scrolling */
+.table-fixed-height {
+  max-height: 400px;
   overflow-y: auto;
 }
 
-.fixed.inset-0.z-50.flex.items-center.justify-center > div,
-.fixed.inset-0.bg-black.bg-opacity-70.flex.items-center.justify-center.z-50 > div {
-  margin: auto;
-  width: calc(100% - 2rem);
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
+/* Sticky header for tables */
+.table-sticky-header th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--admin-bg-alt, #0a0a0a);
 }
 
-/* Ensure modals can be scrolled on mobile */
+/* Table zebra striping for better readability */
+.table-zebra tbody tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.table-zebra tbody tr:nth-child(even) {
+  background-color: rgba(20, 20, 20, 0.3);
+}
+
+/* Enhanced table hover effects */
+.table-hover tr:hover {
+  background-color: rgba(236, 72, 153, 0.08) !important;
+}
+
+/* Admin button styles */
+.admin-btn {
+  @apply rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200;
+}
+
+.admin-btn-primary {
+  @apply bg-pink-500 hover:bg-pink-600 text-white;
+}
+
+.admin-btn-secondary {
+  @apply bg-black border border-pink-500/40 hover:bg-pink-500/10 text-pink-300;
+}
+
+.admin-btn-danger {
+  @apply bg-red-500/20 border border-red-500/40 hover:bg-red-500/30 text-red-300;
+}
+
+/* Admin card with black and pink theme */
+.admin-card {
+  @apply bg-black border border-pink-500/20 rounded-lg shadow-lg p-4;
+}
+
+/* Responsive utilities */
 @media (max-width: 640px) {
-  .max-w-md {
-    max-width: 100%;
+  .mobile-only {
+    display: block;
   }
   
-  .relative.bg-black\/90.backdrop-blur-lg,
-  .bg-gradient-to-b.from-gray-900.to-black {
-    max-height: calc(100vh - 2rem);
-    overflow-y: auto;
-    margin: 1rem auto;
+  .desktop-only {
+    display: none;
+  }
+  
+  .responsive-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .responsive-text-sm {
+    font-size: 0.875rem;
+  }
+  
+  .responsive-text-xs {
+    font-size: 0.75rem;
   }
 }
 
-/* Fix admin panel scrolling */
-.admin-panel-container {
-  height: 100%;
-  max-height: calc(100vh - 6rem);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+@media (min-width: 641px) {
+  .mobile-only {
+    display: none;
+  }
+  
+  .desktop-only {
+    display: block;
+  }
+  
+  .responsive-padding {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Additional responsive table styles */
+@media (max-width: 640px) {
+  .table-responsive-stack th,
+  .table-responsive-stack td {
+    display: block;
+    width: 100%;
+  }
+  
+  .table-responsive-stack tr {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-bottom: 1px solid rgba(236, 72, 153, 0.2);
+    padding: 0.5rem 0;
+  }
+  
+  .table-responsive-stack th {
+    text-align: left;
+    border-bottom: none;
+  }
+  
+  .table-responsive-stack tbody tr {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Improved vertical scrolling for tables */
+.table-scroll-container {
+  position: relative;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Custom avatar styling */
+.avatar {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: rgba(236, 72, 153, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(236, 72, 153, 0.8);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.avatar-sm {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.75rem;
+}
+
+.avatar-lg {
+  width: 3rem;
+  height: 3rem;
+  font-size: 1rem;
 } 

@@ -5,6 +5,52 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+// Client-side logger for authentication
+const logAuth = (level: string, message: string, data?: any) => {
+  const timestamp = new Date().toISOString();
+  const logData = {
+    timestamp,
+    level,
+    source: 'AUTH_CLIENT',
+    message,
+    ...data
+  };
+  
+  // Log to console with appropriate methods
+  switch (level) {
+    case 'ERROR':
+      console.error(`[${timestamp}] [${level}] [AUTH_CLIENT] ${message}`, data);
+      break;
+    case 'WARN':
+      console.warn(`[${timestamp}] [${level}] [AUTH_CLIENT] ${message}`, data);
+      break;
+    case 'INFO':
+      console.info(`[${timestamp}] [${level}] [AUTH_CLIENT] ${message}`, data);
+      break;
+    default:
+      console.log(`[${timestamp}] [${level}] [AUTH_CLIENT] ${message}`, data);
+  }
+  
+  // Optionally send logs to server
+  try {
+    const logEndpoint = '/api/auth/log';
+    // Using sendBeacon for non-blocking logging (if available)
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(logEndpoint, JSON.stringify(logData));
+    } else {
+      // Fallback to fetch
+      fetch(logEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(logData),
+        keepalive: true // Allow request to outlive page
+      }).catch(() => {}); // Ignore errors from logging
+    }
+  } catch (e) {
+    // Silently fail - logging shouldn't impact user experience
+  }
+};
+
 export default function AdminLogin() {
   const [credentials, setCredentials] = useState({
     username: '',
@@ -16,14 +62,29 @@ export default function AdminLogin() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  // Log page load
+  useEffect(() => {
+    const sessionId = crypto.randomUUID();
+    window.sessionStorage.setItem('auth_session_id', sessionId);
+    
+    logAuth('INFO', 'Admin login page loaded', { 
+      sessionId,
+      url: window.location.href,
+      referrer: document.referrer || 'none',
+      userAgent: navigator.userAgent
+    });
+  }, []);
+
   // Check if there's an error parameter
   useEffect(() => {
     const errorParam = searchParams.get('error')
     if (errorParam) {
       if (errorParam === 'auth_failed') {
         setError('Authentication failed. Please try again.')
+        logAuth('WARN', 'Auth failed parameter detected', { errorParam });
       } else {
         setError('An error occurred. Please try again.')
+        logAuth('WARN', 'Error parameter detected', { errorParam });
       }
     }
   }, [searchParams])
@@ -40,7 +101,7 @@ export default function AdminLogin() {
       urlParams.has('error');
     
     // Log what we're doing
-    console.log('Login page initial check:', { 
+    logAuth('DEBUG', 'Initial auth state check', { 
       isResettingAuth, 
       hasParams: urlParams.toString() !== '',
       url: window.location.href
@@ -48,22 +109,23 @@ export default function AdminLogin() {
     
     // Skip auth check if explicitly resetting auth
     if (isResettingAuth) {
-      console.log('Skipping auth check due to parameters:', urlParams.toString());
+      logAuth('INFO', 'Skipping auth check due to parameters', { params: urlParams.toString() });
       return;
     }
     
     // Check authentication status through our API
     const checkAuthStatus = async () => {
       try {
-        console.log('Checking auth status...');
+        logAuth('INFO', 'Checking authentication status');
         
         // Add a timeout to the fetch to prevent hanging
         const controller = new AbortController();
         const timeoutId = setTimeout(() => {
-          console.log('Auth check timeout - aborting');
+          logAuth('WARN', 'Auth check timeout - aborting');
           controller.abort();
         }, 3000);
         
+        const startTime = Date.now();
         const response = await fetch('/api/auth/status', {
           headers: { 
             'Cache-Control': 'no-cache',
@@ -73,17 +135,26 @@ export default function AdminLogin() {
           signal: controller.signal
         });
         
+        const requestDuration = Date.now() - startTime;
         clearTimeout(timeoutId);
         
         if (!response.ok) {
-          console.log('Auth check returned non-OK response:', response.status);
+          logAuth('WARN', 'Auth check returned non-OK response', { 
+            status: response.status, 
+            duration: requestDuration 
+          });
           return;
         }
         
         const data = await response.json();
-        console.log('Auth status result:', data);
+        logAuth('DEBUG', 'Auth status result', { 
+          ...data,
+          requestDuration 
+        });
         
         if (response.ok && data.authenticated) {
+          logAuth('INFO', 'User is authenticated, preparing redirect');
+          
           // Check for a loop by counting navigations in a short time period
           const lastNavTime = parseInt(localStorage.getItem('lastNavTime') || '0', 10);
           const navCount = parseInt(localStorage.getItem('navCount') || '0', 10);
@@ -91,7 +162,11 @@ export default function AdminLogin() {
           
           // If we've navigated too many times in a short period, reset auth to break the loop
           if (now - lastNavTime < 2000 && navCount > 2) {
-            console.warn('Detected possible redirect loop, clearing session data');
+            logAuth('WARN', 'Detected possible redirect loop, clearing session data', {
+              navCount,
+              timeSinceLastNav: now - lastNavTime
+            });
+            
             localStorage.removeItem('navCount');
             localStorage.removeItem('lastNavTime');
             // Force signout to break loop and add reset parameter to prevent immediate recheck
@@ -104,12 +179,15 @@ export default function AdminLogin() {
           localStorage.setItem('navCount', (navCount + 1).toString());
           
           // Continue with normal redirect with a slight delay to prevent flash
+          logAuth('INFO', 'Redirecting to dashboard');
           setTimeout(() => {
             router.push('/admin/dashboard');
           }, 100);
+        } else {
+          logAuth('INFO', 'User is not authenticated');
         }
       } catch (error) {
-        console.error('Auth status check failed:', error);
+        logAuth('ERROR', 'Auth status check failed', { error: String(error) });
       }
     };
     
@@ -120,6 +198,7 @@ export default function AdminLogin() {
   useEffect(() => {
     // Clear cookie on first load if there's a loop detected
     if (document.referrer.includes('/admin/login')) {
+      logAuth('INFO', 'Potential loop detected, clearing auth token cookie');
       document.cookie = 'auth-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
   }, []);
@@ -128,11 +207,13 @@ export default function AdminLogin() {
   useEffect(() => {
     // Clear the redirect attempt cookie to fix potential redirect loops
     document.cookie = 'redirect_attempt=0; Path=/; Max-Age=60';
+    logAuth('DEBUG', 'Reset redirect attempt cookie');
     
     // Reset navigation tracking after 5 seconds of inactivity
     const timer = setTimeout(() => {
       localStorage.removeItem('navCount');
       localStorage.removeItem('lastNavTime');
+      logAuth('DEBUG', 'Cleared navigation tracking data');
     }, 5000);
     
     // Show reset button if page loads multiple times
@@ -141,6 +222,7 @@ export default function AdminLogin() {
     
     if (pageLoads > 2) {
       setShowResetButton(true);
+      logAuth('INFO', 'Showing reset button due to multiple page loads', { pageLoads });
     }
     
     // Reset page loads counter after 10 seconds
@@ -158,8 +240,17 @@ export default function AdminLogin() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    
+    const sessionId = window.sessionStorage.getItem('auth_session_id') || 'unknown';
+    logAuth('INFO', 'Login form submitted', { 
+      username: credentials.username,
+      sessionId
+    });
 
     try {
+      logAuth('DEBUG', 'Sending login request');
+      const startTime = Date.now();
+      
       // Only use our direct API endpoint for login
       const loginResponse = await fetch('/api/auth/login', {
         method: 'POST',
@@ -173,18 +264,36 @@ export default function AdminLogin() {
         cache: 'no-store'
       });
       
+      const requestDuration = Date.now() - startTime;
       const data = await loginResponse.json();
+      
+      logAuth('DEBUG', 'Login response received', { 
+        status: loginResponse.status,
+        success: data.success,
+        duration: requestDuration
+      });
       
       if (loginResponse.ok && data.success) {
         // Successful login via our API
-        router.push(data.redirectTo || '/admin/dashboard');
-        router.refresh();
+        logAuth('INFO', 'Login successful, redirecting', { 
+          redirectTo: data.redirectTo || '/admin'
+        });
+        
+        // Use window.location for a full page redirect and force reload to ensure cookies are applied
+        window.location.href = data.redirectTo || '/admin';
+        return;
       } else {
         // Login failed
-        setError(data.message || 'Invalid username or password');
+        const errorMessage = data.message || 'Invalid username or password';
+        logAuth('WARN', 'Login failed', { 
+          error: errorMessage,
+          status: loginResponse.status
+        });
+        
+        setError(errorMessage);
       }
     } catch (error) {
-      console.error('Login error:', error);
+      logAuth('ERROR', 'Login error', { error: String(error) });
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -192,7 +301,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen w-full bg-black relative overflow-x-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -205,27 +314,27 @@ export default function AdminLogin() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
+      <div className="relative z-10 min-h-screen w-full flex items-center justify-center px-4 py-6 sm:py-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
+          className="w-full max-w-sm sm:max-w-md"
         >
           {/* Logo/Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-['Noto_Serif_Display'] mb-2">ΗΔΙR ΞNΓIΝΣΣR</h1>
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-3xl sm:text-4xl font-['Noto_Serif_Display'] mb-2">ΗΔΙR ΞNΓIΝΣΣR</h1>
             <p className="text-gray-400">Admin Dashboard</p>
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="bg-black/50 backdrop-blur-sm p-8 rounded-lg border border-gray-800">
+          <form onSubmit={handleSubmit} className="bg-black/50 backdrop-blur-sm p-5 sm:p-8 rounded-lg border border-gray-800">
             {error && (
               <div className="mb-4 p-3 bg-red-900/50 border border-red-800 text-red-300 rounded text-sm">
                 {error}
               </div>
             )}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Username Field */}
               <div>
                 <label htmlFor="username" className="block text-sm font-['Noto_Serif_Display'] text-gray-300 mb-1">
@@ -236,7 +345,7 @@ export default function AdminLogin() {
                   id="username"
                   value={credentials.username}
                   onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
-                  className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded focus:outline-none focus:border-gray-700 text-white"
+                  className="w-full p-2 sm:p-3 bg-gray-900/50 border border-gray-800 rounded focus:outline-none focus:border-gray-700 text-white"
                   required
                 />
               </div>
@@ -251,7 +360,7 @@ export default function AdminLogin() {
                   id="password"
                   value={credentials.password}
                   onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-                  className="w-full p-3 bg-gray-900/50 border border-gray-800 rounded focus:outline-none focus:border-gray-700 text-white"
+                  className="w-full p-2 sm:p-3 bg-gray-900/50 border border-gray-800 rounded focus:outline-none focus:border-gray-700 text-white"
                   required
                 />
               </div>
@@ -260,7 +369,7 @@ export default function AdminLogin() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white font-['Noto_Serif_Display'] uppercase tracking-wider hover:from-gray-700 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 transition-all duration-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2 sm:py-3 bg-gradient-to-r from-gray-800 to-gray-900 text-white font-['Noto_Serif_Display'] uppercase tracking-wider hover:from-gray-700 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 transition-all duration-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
@@ -268,7 +377,7 @@ export default function AdminLogin() {
           </form>
 
           {/* Back to Home Link */}
-          <div className="text-center mt-6 flex flex-col gap-2">
+          <div className="text-center mt-4 sm:mt-6 flex flex-col gap-2">
             <a 
               href="/" 
               className="text-sm text-gray-400 hover:text-white transition-colors duration-200"

@@ -6,7 +6,7 @@ import Image from 'next/image'
 
 export default function AdminDashboard() {
   return (
-    <div className="mobile-view-container bg-black relative">
+    <div className="w-full min-h-screen bg-black relative">
       {/* Background Image */}
       <div className="fixed inset-0 z-0">
         <Image
@@ -23,7 +23,7 @@ export default function AdminDashboard() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative z-10"
+        className="relative z-10 w-full"
       >
         <AdminPanel />
       </motion.div>
