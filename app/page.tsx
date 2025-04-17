@@ -62,16 +62,51 @@ export default function Home() {
         }}
       />
       
-      {/* Responsive container */}
-      <motion.div 
-        className="w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
-        {/* Decorative elements */}
+      {/* Hero Header Section */}
+      <header className="relative w-full min-h-[70vh] flex items-center justify-center">
+        {/* Background Image with overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="/images/profile_image.png" 
+            alt="Hair Engineer Background" 
+            fill
+            className="object-cover object-center"
+            priority
+            onLoad={handleImageLoad}
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        </div>
+        
+        {/* Grouped Text + Logo positioned at bottom */}
+        <div className="absolute bottom-[15px] w-full flex flex-col items-center justify-center text-center px-4 z-10">
+          <motion.p 
+            className="text-black-400 italic uppercase tracking-wide text-sm mb-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            Hey, Babe! Thanks for booking with
+          </motion.p>
+          <motion.div
+            className="w-40 sm:w-48 relative"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1.2 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <Image
+              src="/images/logo.png"
+              alt="Hair Engineer Logo"
+              width={340}
+              height={220}
+              className="w-full h-auto"
+              priority
+            />
+          </motion.div>
+        </div>
+        
+        {/* Optional: subtle decorative elements */}
         <motion.div
-          className="absolute top-4 right-4 text-pink-300/30 z-10"
+          className="absolute top-5 right-4 text-pink-300/30 z-10"
           variants={sparkleVariants}
           initial="initial"
           animate="animate"
@@ -79,7 +114,7 @@ export default function Home() {
           <Sparkles size={18} />
         </motion.div>
         <motion.div
-          className="absolute top-[180px] right-8 text-pink-300/30 z-10" 
+          className="absolute bottom-8 left-8 text-pink-300/30 z-10" 
           variants={sparkleVariants}
           initial="initial"
           animate="animate"
@@ -87,90 +122,30 @@ export default function Home() {
         >
           <Sparkles size={12} />
         </motion.div>
-        
-        {/* Header section with background image and left-aligned text */}
-        <div className="relative h-[250px] sm:h-[220px] md:h-[250px] header-section overflow-hidden rounded-b-lg">
-          {/* Background image with overlay */}
-          <div className="absolute inset-0 z-0 ">
-            <Image 
-              src="/images/backgroundphoto.png" 
-              alt="Hair Engineer Background" 
-              fill
-              className="object-cover object-top"
-              priority
-              onLoad={handleImageLoad}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/60 to-black/70"></div>
-          </div>
-          
-          {/* Left-aligned logo instead of text */}
-          <div className="absolute top-10 left-6 md:left-8 lg:left-10 z-10 text-left">
-            <motion.h5 
-              className="text-[15px] sm:text-xs md:text-sm tracking-[0.3em] text-gray-300 mb-1"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-            >
-              <p className='text-[15px] sm:text-xs md:text-sm tracking-[0.3em] text-pink-300 mb-1'>Hello</p>Gorgeous <span className='text-pink-300'>Girlies!</span><p className='text-[15px] sm:text-xs md:text-sm tracking-[0.3em] text-pink-300 mb-1'>Welcome to</p>
-            </motion.h5>
-            <motion.div 
-              className="relative w-[200px] sm:w-[50%] md:w-[300px] h-[80px] sm:h-[50%] md:h-[120px] overflow-visible"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 , scale: 1.2}}
-              transition={{ delay: 0.4, duration: 0.5 }}
-            >
-              <div className="absolute top-0 left-0 w-[400%] h-[600%] transform origin-top-left scale-[0.25]">
-                <Image 
-                  src="/images/logo.png" 
-                  alt="Hair Engineer Logo" 
-                  fill
-                  className="object-cover object-left w-[400%] h-[400%] "
-                  priority
-                  
-                />
-              </div>
-            </motion.div>
-          </div>
-          
-          {/* Subtle decorative border */}
-          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-pink-300/20 to-transparent"></div>
-        </div>
-        
-        {/* Mid section with profile image and text */}
-        <div className="relative flex flex-col sm:flex-row px-4 sm:px-6 items-center mb-8 sm:mb-12 mid-section mt-20">
-          {/* Profile image as ellipse that partially overlaps header */}
+      </header>
+      
+      {/* Responsive container for the rest of the content */}
+      <motion.div 
+        className="w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+      >
+        {/* Mid section with profile image and text - since hero now has the profile image background, we don't need this part */}
+        <div className="mt-10 mb-8">
+          {/* Experience section */}
           <motion.div 
-            className="w-[250px] h-[300px] sm:w-[250px] sm:h-[100px] elliptical-image overflow-hidden relative -top-16 z-20"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.8, scale: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-          >
-            <div className="absolute top-0 left-0 w-[200%] h-[200%] transform origin-top-left scale-50">
-              <Image 
-                src="/images/profile_image.png" 
-                alt="Hair Engineer Profile" 
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-            {/* Add subtle shadow/glow effect with light pink hue */}
-            
-          </motion.div>
-          
-          {/* Experience section pushed to the right */}
-          <motion.div 
-            className="text-center sm:text-right flex-1 sm:pl-4 sm:ml-2 relative sm:top-6 mt-4 sm:mt-0"
+            className="text-center flex-1 mt-4 sm:mt-0"
             variants={itemVariants}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.9, duration: 0.5 }}
           >
             <h2 className="script-font text-3xl mb-2 font-light text-gradient">Experience The Best</h2>
             <p className="text-[11px] sm:text-xs md:text-sm text-gray-400 mb-3 leading-relaxed">
               Thank you for choosing The Hair Engineer. Your trust and loyalty mean the world to me.
             </p>
-            <div className="flex items-center justify-center sm:justify-end">
+            <div className="flex items-center justify-center">
               <p className="script-font text-xl font-light">-Vanessa</p>
               <motion.span 
                 className="ml-1 text-pink-300/50 cursor-pointer hover:text-pink-300 transition-colors duration-200"
