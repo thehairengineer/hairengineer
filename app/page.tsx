@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import AppointmentForm from './components/AppointmentForm'
 import { useState, useMemo, useCallback } from 'react'
-import { Phone, Mail, Heart, Sparkles, CalendarDays, Star } from 'lucide-react'
+import { Phone, Mail, Heart, Sparkles, CalendarDays, Star, Instagram, MessageCircle, Video } from 'lucide-react'
 import { motion, Variants } from 'framer-motion'
 
 export default function Home() {
@@ -58,6 +58,7 @@ export default function Home() {
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
           `
         }}
       />
@@ -78,14 +79,15 @@ export default function Home() {
         </div>
         
         {/* Grouped Text + Logo positioned at bottom */}
-        <div className="absolute bottom-[15px] w-full flex flex-col items-center justify-center text-center px-4 z-10">
+        <div className="absolute bottom-[10px] w-full flex flex-col items-center justify-center text-center px-7 z-10">
           <motion.p 
             className="text-black-400 italic uppercase tracking-wide text-sm mb-2"
+            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0, scale: 1.4 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            Hey, Babe! Thanks for booking with
+            Hello, Gorgeous Girlie! Thanks for booking with
           </motion.p>
           <motion.div
             className="w-40 sm:w-48 relative"
@@ -190,52 +192,146 @@ export default function Home() {
             </a>
           </motion.div>
           
-          {/* Booking policies in 2x2 grid with fine-tuned spacing and subtle pink accents */}
+          {/* NEW: Booking policies with updated card layout */}
           <motion.div 
-            className="mb-10 bg-black-900/90 backdrop-blur-sm rounded-lg shadow-lg p-4 sm:p-6 border border-pink-500/20"
+            className="mb-10"
             variants={itemVariants}
           >
-            <h2 className="text-center text-xl mb-4 font-semibold text-pink-400 serif-font">Booking Policies</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6 policy-grid">
+            <h2 className="text-center text-xl mb-6 font-semibold text-pink-400 serif-font">Booking Policies</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* PAYMENT */}
               <motion.div 
-                className="p-4 rounded-lg hover:bg-pink-950/20 policy-card border border-pink-500/10 shadow-md"
-                whileHover={{ scale: 1.02 }}
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
                 transition={{ duration: 0.2 }}
               >
-                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">Lateness</h3>
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">PAYMENT</h3>
                 <p className="text-sm text-gray-300 leading-relaxed">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
+                  A non-refundable deposit is required to book your slot. Remaining balance must be paid in cash or MoMo at the time of service.
                 </p>
               </motion.div>
+              
+              {/* LATENESS */}
               <motion.div 
-                className="p-4 rounded-lg hover:bg-pink-950/20 policy-card border border-pink-500/10 shadow-md"
-                whileHover={{ scale: 1.02 }}
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
                 transition={{ duration: 0.2 }}
               >
-                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">Payment</h3>
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">LATENESS</h3>
                 <p className="text-sm text-gray-300 leading-relaxed">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
+                  Please arrive on time. A 30-minute grace period is allowed. After 45 minutes, your appointment may be cancelled or rescheduled depending on availability.
                 </p>
               </motion.div>
+              
+              {/* RESCHEDULES */}
               <motion.div 
-                className="p-4 rounded-lg hover:bg-pink-950/20 policy-card border border-pink-500/10 shadow-md"
-                whileHover={{ scale: 1.02 }}
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
                 transition={{ duration: 0.2 }}
               >
-                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">Reschedules</h3>
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">RESCHEDULES</h3>
                 <p className="text-sm text-gray-300 leading-relaxed">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
+                  You may reschedule once, at least 24 hours in advance. Rescheduling within 24 hours may require a new deposit.
                 </p>
               </motion.div>
+              
+              {/* PREP */}
               <motion.div 
-                className="p-4 rounded-lg hover:bg-pink-950/20 policy-card border border-pink-500/10 shadow-md"
-                whileHover={{ scale: 1.02 }}
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
                 transition={{ duration: 0.2 }}
               >
-                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">Prep</h3>
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">PREP</h3>
                 <p className="text-sm text-gray-300 leading-relaxed">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore commodi tenetur.
+                  Hair must be clean, detangled, well blow-dried and free of product build-up.
                 </p>
+              </motion.div>
+              
+              {/* NO REFUNDS */}
+              <motion.div 
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">NO REFUNDS</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  All deposits and payments are final. If unsatisfied, kindly raise concerns during the appointment so we can make adjustments.
+                </p>
+              </motion.div>
+              
+              {/* CANCELLATIONS */}
+              <motion.div 
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">CANCELLATIONS</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Cancellations must be made 24 hours in advance. Last-minute cancellations result in loss of deposit.
+                </p>
+              </motion.div>
+              
+              {/* REVAMPS */}
+              <motion.div 
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">REVAMPS</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Processing takes 3–5 working days. Drop-offs after 3PM count as next-day processing.
+                </p>
+              </motion.div>
+              
+              {/* INSTALLATIONS */}
+              <motion.div 
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">INSTALLATIONS</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Please drop off your unit 1–2 days before your appointment to allow for prep.
+                </p>
+              </motion.div>
+              
+              {/* PONYTAILS */}
+              <motion.div 
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">PONYTAILS</h3>
+                <ul className="text-sm text-gray-300 leading-relaxed list-disc pl-5">
+                  <li>For ponytail styles, hair must be freshly washed, detangled, and product-free.</li>
+                  <li>Minimum hair length required is 6 inches—shorter lengths should book a consultation.</li>
+                  <li>Styling products are provided; bring your own if you have sensitivities or preferences.</li>
+                </ul>
+              </motion.div>
+              
+              {/* WIG MAKING */}
+              <motion.div 
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">WIG MAKING</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Custom units take 5–7 working days to complete.
+                </p>
+              </motion.div>
+              
+              {/* ADDITIONAL SERVICES */}
+              <motion.div 
+                className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)" }}
+                transition={{ duration: 0.2 }}
+              >
+                <h3 className="serif-font font-bold text-sm uppercase mb-2 tracking-wider text-pink-300">ADDITIONAL SERVICES</h3>
+                <ul className="text-sm text-gray-300 leading-relaxed list-disc pl-5">
+                  <li>Plucking & Knot Bleaching: Extra</li>
+                  <li>All add-ons must be selected at booking.</li>
+                </ul>
               </motion.div>
             </div>
           </motion.div>
@@ -294,6 +390,63 @@ export default function Home() {
           )}
         </motion.section>
       </motion.div>
+      
+      {/* New Footer Section */}
+      <footer className="w-full bg-neutral-900 mt-20 pt-12 pb-6 border-t border-gray-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Quick Links */}
+            <div>
+              <h3 className="text-pink-400 font-['Noto_Serif_Display'] text-lg font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-300 hover:text-pink-300 transition-colors text-sm">About Us</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-pink-300 transition-colors text-sm">Training Courses</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-pink-300 transition-colors text-sm">Luxury Hair Extensions</a></li>
+              </ul>
+            </div>
+            
+            {/* Explore */}
+            <div>
+              <h3 className="text-pink-400 font-['Noto_Serif_Display'] text-lg font-semibold mb-4">Explore</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-300 hover:text-pink-300 transition-colors text-sm">Client Reviews</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-pink-300 transition-colors text-sm">FAQ</a></li>
+              </ul>
+            </div>
+            
+            {/* Connect With Us */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center lg:px-8">
+              <h3 className="text-pink-400 font-['Noto_Serif_Display'] text-lg font-semibold mb-4">Connect With Us</h3>
+              <ul className="space-y-2">
+                <li>
+                  <a href="#" className="text-gray-300 hover:text-pink-300 transition-colors text-sm flex items-center">
+                    <Instagram size={16} className="mr-2" />
+                    <span>Instagram</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-300 hover:text-pink-300 transition-colors text-sm flex items-center">
+                    <Video size={16} className="mr-2" />
+                    <span>TikTok</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-300 hover:text-pink-300 transition-colors text-sm flex items-center">
+                    <MessageCircle size={16} className="mr-2" />
+                    <span>WhatsApp</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          {/* Copyright and Creator Credit */}
+          <div className="mt-12 pt-6 border-t border-gray-800 text-center">
+            <p className="text-gray-400 text-sm mb-2">© 2025 The Hair Engineer. All Rights Reserved.</p>
+            <p className="text-gray-500 text-xs">Created by Dong Tech. Contact us on +233 2041 63714 to build your dream business together.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

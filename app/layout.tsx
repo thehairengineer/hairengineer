@@ -5,12 +5,18 @@ import { Montserrat } from 'next/font/google'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Toaster } from 'react-hot-toast'
+import { Metadata } from 'next'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
   variable: '--font-montserrat',
   weight: ['100', '200', '300', '400', '500', '600', '700'],
 })
+
+const metadata: Metadata = {
+  title: 'Hair Engineer',
+  description: 'Book your next hairstyle with us',
+}
 
 export default function RootLayout({
   children,
@@ -54,16 +60,18 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Herr+Von+Muellerhoff&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
       </head>
       <body 
         className="font-montserrat bg-black text-white flex items-center justify-center min-h-screen overflow-x-hidden"
+        style={{ fontFamily: "'Bebas Neue', sans-serif" }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleTouchStart}
         onMouseUp={handleTouchEnd}
         onMouseLeave={handleTouchEnd}
       >
-        <Toaster
+        <Toaster 
           position="top-right"
           toastOptions={{
             style: {
