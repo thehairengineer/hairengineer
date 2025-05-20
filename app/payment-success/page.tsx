@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle, XCircle } from 'lucide-react'
@@ -29,6 +29,10 @@ function PaymentSuccessContent() {
   const [error, setError] = useState('')
   const [retryCount, setRetryCount] = useState(0)
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({})
+  
+  // Create refs to track verification status and prevent duplicate API calls
+  const verificationAttemptedRef = useRef(false)
+  const isRetryingRef = useRef(false)
 
   // Function to send window message to parent when verification completes
   const sendVerificationMessage = (success: boolean, reference: string) => {
@@ -90,6 +94,9 @@ function PaymentSuccessContent() {
         
         // Retry after a delay if within retry limit
         if (retryCount < 3) {
+          // Set retrying flag before scheduling the retry
+          isRetryingRef.current = true
+          
           setTimeout(() => {
             setRetryCount(prev => prev + 1)
           }, 3000)
@@ -110,13 +117,34 @@ function PaymentSuccessContent() {
 
   // Verify payment when reference changes or on retry
   useEffect(() => {
-    if (reference) {
-      verifyPayment(reference)
-    } else {
+    // Prevent verification if no reference exists
+    if (!reference) {
       setError('No payment reference provided')
       setIsLoading(false)
+      return;
     }
-  }, [reference, retryCount, verifyPayment])
+    
+    // Initial load: Check if this is the first verification attempt
+    if (!verificationAttemptedRef.current) {
+      // Mark as attempted to prevent duplicate calls on re-renders
+      verificationAttemptedRef.current = true;
+      verifyPayment(reference);
+    } 
+    // Handle retries: Only verify again if retryCount changed and we're actually retrying
+    else if (isRetryingRef.current) {
+      // Reset the retrying flag since we're handling this retry now
+      isRetryingRef.current = false;
+      verifyPayment(reference);
+    }
+    
+    // Cleanup function
+    return () => {
+      // No cleanup needed, but included for completeness
+    };
+    
+    // Only depend on reference and retryCount, verifyPayment is stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reference, retryCount]);
 
   if (isLoading && !paymentVerified) {
     return (

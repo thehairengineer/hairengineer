@@ -194,47 +194,47 @@ export default function AdminLogin() {
     checkAuthStatus();
   }, [router]);
 
-  // Add forced reset on login page first load
-  useEffect(() => {
-    // Clear cookie on first load if there's a loop detected
-    if (document.referrer.includes('/admin/login')) {
-      logAuth('INFO', 'Potential loop detected, clearing auth token cookie');
-      document.cookie = 'auth-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    }
-  }, []);
+  // // Add forced reset on login page first load
+  // useEffect(() => {
+  //   // Clear cookie on first load if there's a loop detected
+  //   if (document.referrer.includes('/admin/login')) {
+  //     logAuth('INFO', 'Potential loop detected, clearing auth token cookie');
+  //     document.cookie = 'auth-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  //   }
+  // }, []);
 
   // Clear any redirect counters on component mount
-  useEffect(() => {
-    // Clear the redirect attempt cookie to fix potential redirect loops
-    document.cookie = 'redirect_attempt=0; Path=/; Max-Age=60';
-    logAuth('DEBUG', 'Reset redirect attempt cookie');
+  // useEffect(() => {
+  //   // Clear the redirect attempt cookie to fix potential redirect loops
+  //   document.cookie = 'redirect_attempt=0; Path=/; Max-Age=60';
+  //   logAuth('DEBUG', 'Reset redirect attempt cookie');
     
-    // Reset navigation tracking after 5 seconds of inactivity
-    const timer = setTimeout(() => {
-      localStorage.removeItem('navCount');
-      localStorage.removeItem('lastNavTime');
-      logAuth('DEBUG', 'Cleared navigation tracking data');
-    }, 5000);
+  //   // Reset navigation tracking after 5 seconds of inactivity
+  //   const timer = setTimeout(() => {
+  //     localStorage.removeItem('navCount');
+  //     localStorage.removeItem('lastNavTime');
+  //     logAuth('DEBUG', 'Cleared navigation tracking data');
+  //   }, 5000);
     
-    // Show reset button if page loads multiple times
-    const pageLoads = parseInt(localStorage.getItem('pageLoads') || '0', 10);
-    localStorage.setItem('pageLoads', (pageLoads + 1).toString());
+  //   // Show reset button if page loads multiple times
+  //   const pageLoads = parseInt(localStorage.getItem('pageLoads') || '0', 10);
+  //   localStorage.setItem('pageLoads', (pageLoads + 1).toString());
     
-    if (pageLoads > 2) {
-      setShowResetButton(true);
-      logAuth('INFO', 'Showing reset button due to multiple page loads', { pageLoads });
-    }
+  //   if (pageLoads > 2) {
+  //     setShowResetButton(true);
+  //     logAuth('INFO', 'Showing reset button due to multiple page loads', { pageLoads });
+  //   }
     
-    // Reset page loads counter after 10 seconds
-    const resetTimer = setTimeout(() => {
-      localStorage.setItem('pageLoads', '0');
-    }, 10000);
+  //   // Reset page loads counter after 10 seconds
+  //   const resetTimer = setTimeout(() => {
+  //     localStorage.setItem('pageLoads', '0');
+  //   }, 10000);
     
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(resetTimer);
-    }
-  }, []);
+  //   return () => {
+  //     clearTimeout(timer);
+  //     clearTimeout(resetTimer);
+  //   }
+  // }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

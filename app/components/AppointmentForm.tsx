@@ -870,7 +870,7 @@ export default function AppointmentForm() {
   }
 
   return (
-    <div className="py-10 px-5">
+    <div className="py-10 px-5" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
       <h2 className="font-['Noto_Serif_Display'] text-3xl mb-6 text-center">Appointment Details</h2>
       
       {/* Add scroll indicator for new users */}
@@ -901,13 +901,13 @@ export default function AppointmentForm() {
           </p>
           <div className="flex justify-center space-x-4">
             <a 
-              href="tel:(123)-456-7890" 
+              href="tel:+233556009078" 
               className="px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700 rounded text-sm hover:bg-gray-700 transition-colors duration-300"
             >
               Call Us
             </a>
             <a 
-              href="https://wa.me/message/Z6BZWWQ3Q5FKG1" 
+              href="https://wa.me/233556009078" 
               className="px-4 py-2 bg-gradient-to-r from-green-800 to-green-900 border border-green-700 rounded text-sm hover:bg-green-700 transition-colors duration-300"
             >
               WhatsApp

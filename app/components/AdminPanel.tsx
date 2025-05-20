@@ -1163,62 +1163,62 @@ export default function AdminPanel() {
         ) : (
           <>
             {/* Different content based on active tab */}
-            {activeTab === 'overview' && (
+          {activeTab === 'overview' && (
                 <div className="space-y-6">
                   {/* Stats Cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                     <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-pink-500/20 p-4 hover:border-pink-500/40 transition-colors duration-200">
                       <div className="font-['Noto_Serif_Display'] text-pink-300 text-sm mb-1">Today</div>
                       <div className="text-xl font-bold">{categorizedAppointments.today.length}</div>
-                  </div>
+                </div>
                     <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-pink-500/20 p-4 hover:border-pink-500/40 transition-colors duration-200">
                       <div className="font-['Noto_Serif_Display'] text-pink-300 text-sm mb-1">Upcoming</div>
                       <div className="text-xl font-bold">{categorizedAppointments.upcoming.length}</div>
-                  </div>
+                </div>
                     <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-pink-500/20 p-4 hover:border-pink-500/40 transition-colors duration-200">
                       <div className="font-['Noto_Serif_Display'] text-pink-300 text-sm mb-1">Available Dates</div>
                       <div className="text-xl font-bold">{availableDates.length}</div>
-                  </div>
+                </div>
                     <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-pink-500/20 p-4 hover:border-pink-500/40 transition-colors duration-200">
                       <div className="font-['Noto_Serif_Display'] text-pink-300 text-sm mb-1">Total Clients</div>
                       <div className="text-xl font-bold">{appointments.length}</div>
-                  </div>
-                  </div>
+                </div>
+              </div>
 
                     {/* Appointment Tables */}
                     {renderAppointmentTable(categorizedAppointments.today, "Today's")}
                     {renderAppointmentTable(categorizedAppointments.upcoming, "Upcoming")}
-                    </div>
-            )}
-
-            {activeTab === 'appointments' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-4"
-              >
-                <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-gray-800 p-4">
-                  <div className="overflow-x-auto">
-                    {renderAppointmentTable(categorizedAppointments.today, "Today's")}
-                    {renderAppointmentTable(categorizedAppointments.upcoming, 'Upcoming')}
-                    {renderAppointmentTable(categorizedAppointments.past, 'Past')}
-                  </div>
                 </div>
-              </motion.div>
-            )}
+          )}
 
-            {activeTab === 'dates' && renderAvailableDatesTab()}
+          {activeTab === 'appointments' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-4"
+            >
+              <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-gray-800 p-4">
+                <div className="overflow-x-auto">
+                  {renderAppointmentTable(categorizedAppointments.today, "Today's")}
+                  {renderAppointmentTable(categorizedAppointments.upcoming, 'Upcoming')}
+                  {renderAppointmentTable(categorizedAppointments.past, 'Past')}
+                </div>
+              </div>
+            </motion.div>
+          )}
 
-            {activeTab === 'styles' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <HairStylesManager />
-              </motion.div>
-            )}
+          {activeTab === 'dates' && renderAvailableDatesTab()}
 
-            {activeTab === 'settings' && renderSettingsTab()}
+          {activeTab === 'styles' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <HairStylesManager />
+            </motion.div>
+          )}
+
+          {activeTab === 'settings' && renderSettingsTab()}
           </>
         )}
       </div>

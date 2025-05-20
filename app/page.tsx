@@ -184,7 +184,7 @@ export default function Home() {
           >
             <a href="tel:(123)-456-7890" className="flex items-center text-gray-400 hover:text-pink-200 transition-colors duration-300 text-[10px] sm:text-xs">
               <Phone size={12} className="mr-1" />
-              (123)-456-7890
+              +233 55 600 9078
             </a>
             <a href="mailto:thehairengineer.gh@gmail.com" className="flex items-center text-gray-400 hover:text-pink-200 transition-colors duration-300 text-[10px] sm:text-xs">
               <Mail size={12} className="mr-1" />
@@ -198,7 +198,7 @@ export default function Home() {
             variants={itemVariants}
           >
             <h2 className="text-center text-xl mb-6 font-semibold text-pink-400 serif-font">Booking Policies</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
               {/* PAYMENT */}
               <motion.div 
                 className="bg-black/80 backdrop-blur-sm rounded-lg shadow-lg p-4 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300"

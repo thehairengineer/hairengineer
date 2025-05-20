@@ -94,9 +94,7 @@ export async function POST(request: Request) {
                 $set: {
                   status: 'confirmed',
                   amountPaid: paymentAmount,
-                  paymentStatus: 'full'
-                },
-                $push: {
+                  paymentStatus: 'full',
                   paymentHistory: {
                     amount: paymentAmount,
                     date: paymentDate,

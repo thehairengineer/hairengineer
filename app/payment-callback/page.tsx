@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -18,7 +18,19 @@ function PaymentCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
+  // Use a ref to track if verification has been attempted
+  const verificationAttemptedRef = useRef(false)
+  
   useEffect(() => {
+    // Only run verification once, regardless of re-renders or searchParams changes
+    if (verificationAttemptedRef.current) {
+      // Verification already attempted, don't trigger API call again
+      return;
+    }
+    
+    // Mark verification as attempted to prevent duplicate calls
+    verificationAttemptedRef.current = true;
+    
     // Get the reference from the URL query parameters
     const reference = searchParams.get('reference')
     
@@ -51,6 +63,14 @@ function PaymentCallbackContent() {
         setStatus('failed')
         setMessage('An error occurred while verifying your payment. Please contact support.')
       })
+      
+    // Cleanup function
+    return () => {
+      // No cleanup needed, but included for completeness
+    }
+    
+    // We only include searchParams as a dependency, but we're using the ref to prevent duplicate calls
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
   
   return (
@@ -109,7 +129,7 @@ function PaymentCallbackContent() {
               Return to Home
             </Link>
             
-            <a href="https://wa.me/message/Z6BZWWQ3Q5FKG1" className="w-full py-2 bg-green-900 text-white text-center font-['Noto_Serif_Display'] uppercase tracking-wider hover:bg-green-800 rounded">
+            <a href="https://wa.me/233556009078" className="w-full py-2 bg-green-900 text-white text-center font-['Noto_Serif_Display'] uppercase tracking-wider hover:bg-green-800 rounded">
               Contact on WhatsApp
             </a>
           </div>
